@@ -24,7 +24,7 @@ theme_set(theme_minimal())
 
 # Loading the dataset (only analysis vars)
 ```{r}
-d_raw <- import(here("nopublish", "1MdMMedicinCUIDADORE-1MdMMedicinCUIDADORE_DATA_2022-09-09_2130.csv"), setclass = "tbl_df")
+d_raw <- import(here("nopublish", "1MdMMedicinCUIDADORE_DATA_2023-11-16_1846_cohort1.csv"), setclass = "tbl_df")
 ```
 
 #initial cleaning
