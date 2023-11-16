@@ -22,22 +22,54 @@ library(sjmisc)
 theme_set(theme_minimal())
 ```
 
-# Loading the dataset (only analysis vars)
+# Loading the dataset (cohort 1)
 ```{r}
-d_raw <- import(here("nopublish", "1MdMMedicinCUIDADORE_DATA_2023-11-16_1846_cohort1.csv"), setclass = "tbl_df")
+d_raw_c1 <- import(here("nopublish", "1MdMMedicinCUIDADORE_DATA_2023-11-16_1846_cohort1.csv"), setclass = "tbl_df")
 ```
 
-#initial cleaning
+#initial cleaning (cohort 1)
 ```{r}
 
-d <- d_raw[-c(1:5), ] # removing first 5 rows of data
+# d_raw_c1 <- d_raw_c1[-c(1:5), ] # to remove rows of data
 
-d1 <- d %>% 
-  select(-2:-34) %>% # selecting out columns with non-relevant data (, -238:-255)
-  rename(c("id" = "record_id")) %>% # renaming id variable.
+d_c1 <- d_raw_c1 %>% 
+  select(-2:-7, -11:-13, -203:-210) %>% # selecting out columns with non-relevant data (, -238:-255)
   clean_names() %>% # function that formats variables' names
-  arrange(id) # ordering participants ids in descending order
+  # arrange(record_id) # ordering participants ids in descending order (not doing this because record_id needs further cleaning)
 ```
+
+Need to find a way to add the condition of the study:
+
+even record_id = 2 = control?
+odd record_id = 1 = intervention?
+
+# before (cohort 1)
+```{r}
+# view_df(d_c1)
+```
+
+# renaming variables (cohort 1)
+```{r}
+d1_c1 <- d_c1 %>% 
+  rename(c("new_name" = "old_name")) %>% # to match coh_
+  rename(c("new_name" = "old_name")) %>% # to match coh_
+  rename(c("new_name" = "old_name")) %>% # to match coh_
+  
+  
+  # rename(c("demo014_1_77" = "demo014_1_5")) %>% # to match coh_2
+  # rename(c("demo019_1_77" = "demo019_1_10")) %>% # to match coh_2
+```
+
+
+# Adding Variable and value labels
+```{r}
+# d3 <- d2 %>%
+#   mutate(sdq001_1 = as.numeric(sdq001_1),
+#          sdq001_1 = set_varl(sdq001_1, "Tiene en cuenta los sentimientos de otras personas"),
+#          sdq001_1 = set_vall(sdq001_1, c("No es cierto" = 0, "Algo cierto" = 1, "Totalmente cierto" = 2, "No responde" = 99))) # puede escribirse en ingles
+```
+
+
 # recoding missing variables as N/A
 ```{r include=FALSE}
 
@@ -55,26 +87,13 @@ recode_missing_df <- function(df, missing_vals = c(77, 99)) {
   modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
 }
 
-d2 <- recode_missing_df(d1) # the function strips out variable labels
-```
-
-# before
-```{r}
-view_df(d2)
+d2_c1 <- recode_missing_df(d1_c1) # the function strips out variable labels
 ```
 
 
-# Adding Variable and value labels
+# after (cohort 1)
 ```{r}
-d3 <- d2 %>%
-  mutate(sdq001_1 = as.numeric(sdq001_1),
-         sdq001_1 = set_varl(sdq001_1, "Tiene en cuenta los sentimientos de otras personas"),
-         sdq001_1 = set_vall(sdq001_1, c("No es cierto" = 0, "Algo cierto" = 1, "Totalmente cierto" = 2, "No responde" = 99))) # puede escribirse en ingles
-```
-
-# after
-```{r}
-view_df(d3)
+# view_df(d2_c1)
 ```
 
 # descriptive stats function
@@ -102,4 +121,20 @@ descriptives <- function(df) {
        .id = "column")
   return(mean_sd)
 }
+```
+
+
+-----
+
+# Loading the dataset cohort 2
+```{r}
+d_raw_c2 <- import(here("nopublish", "1MdMMedicinCUIDADORE_DATA_2023-11-16_1842_cohort2.csv"), setclass = "tbl_df")
+```
+
+# renaming variables (cohort 2)
+```{r}
+
+# d1_c2 <- d_c2 %>% 
+#   rename(c("demo014_1_5" = "demo014_1_77")) %>% # to match coh_1
+#   rename(c("demo019_1_10" = "demo019_1_77")) %>% # to match coh_1
 ```
