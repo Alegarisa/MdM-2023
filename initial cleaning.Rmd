@@ -1,0 +1,105 @@
+---
+title: "initial cleaning"
+output: html_document
+date: "2023-11-16"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(rio)
+library(here)
+library(tidyverse)
+library(haven)
+library(janitor)
+library(knitr)
+library(surveytoolbox)
+library(sjPlot)
+library(kableExtra)
+library(psych)
+library(sjmisc)
+
+theme_set(theme_minimal())
+```
+
+# Loading the dataset (only analysis vars)
+```{r}
+d_raw <- import(here("nopublish", "1MdMMedicinCUIDADORE-1MdMMedicinCUIDADORE_DATA_2022-09-09_2130.csv"), setclass = "tbl_df")
+```
+
+#initial cleaning
+```{r}
+
+d <- d_raw[-c(1:5), ] # removing first 5 rows of data
+
+d1 <- d %>% 
+  select(-2:-34) %>% # selecting out columns with non-relevant data (, -238:-255)
+  rename(c("id" = "record_id")) %>% # renaming id variable.
+  clean_names() %>% # function that formats variables' names
+  arrange(id) # ordering participants ids in descending order
+```
+# recoding missing variables as N/A
+```{r include=FALSE}
+
+# vector with missing values in dataset
+missing_vals <- c(77, 99)
+
+# function that returns true if values in vector are equal to missing_vals. The function takes a vector x, and specified values of missing data
+recode_missing <- function(x, missing_vals = c(77, 99)) {
+  test <- x %in% missing_vals
+  ifelse(test, NA, x)
+}
+
+# function that recodes missing values to NA. The function takes a dataframe with variables with missing data, and specified values of missing data
+recode_missing_df <- function(df, missing_vals = c(77, 99)) {
+  modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
+}
+
+d2 <- recode_missing_df(d1) # the function strips out variable labels
+```
+
+# before
+```{r}
+view_df(d2)
+```
+
+
+# Adding Variable and value labels
+```{r}
+d3 <- d2 %>%
+  mutate(sdq001_1 = as.numeric(sdq001_1),
+         sdq001_1 = set_varl(sdq001_1, "Tiene en cuenta los sentimientos de otras personas"),
+         sdq001_1 = set_vall(sdq001_1, c("No es cierto" = 0, "Algo cierto" = 1, "Totalmente cierto" = 2, "No responde" = 99))) # puede escribirse en ingles
+```
+
+# after
+```{r}
+view_df(d3)
+```
+
+# descriptive stats function
+```{r include=FALSE}
+
+# function that takes a df and returns a df with only the numeric columns
+only_numeric <- function(df) {
+  select_numeric <- dplyr::select_if(df, is.numeric)
+  return(select_numeric)
+}
+
+# a list with the functions we want
+smry <- list(n = function(x) length(x),
+             n_valid = function(x) sum(!is.na(x)),
+             na = function(x) sum(is.na(x)),
+             M = function(x) round(mean(x, na.rm = TRUE), 2), 
+             SD = function(x) round(sd(x, na.rm = TRUE), 2),
+             Min = function(x) round(min(x, na.rm = TRUE), 2),
+             Max = function(x) round(max(x, na.rm = TRUE), 2))
+
+# wrapping solution in a function
+descriptives <- function(df) {
+  select_numeric <- only_numeric(df)
+  mean_sd <- map_df(select_numeric, function(col) map_df(smry, ~.x(col)),
+       .id = "column")
+  return(mean_sd)
+}
+```
