@@ -40,8 +40,17 @@ d_c1 <- d_raw_c1 %>%
 
 Need to find a way to add the condition of the study:
 
-even record_id = 2 = control?
-odd record_id = 1 = intervention?
+odd record_id = 1 = intervention
+even record_id = 2 = control
+
+
+```{r}
+test <- d_c1 %>%
+  mutate(condition_in_the_study = case_when(
+    record_id >= "0201" & record_id <= "0299" |  ~ "2",
+    TRUE ~ as.character(condition_in_the_study))) # this works, but when I add the other conditions it breaks. 
+
+```
 
 # before (cohort 1)
 ```{r}
