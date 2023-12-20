@@ -22,87 +22,130 @@ library(sjmisc)
 theme_set(theme_minimal())
 ```
 
-# Loading the dataset (cohort 1)
+# Loading the dataset (cohort 1 - wave 1)
 ```{r}
-d_raw_c1 <- import(here("nopublish", "1MdMMedicinCUIDADORE_DATA_2023-11-16_1846_cohort1.csv"), setclass = "tbl_df")
+d_raw_w1 <- import(here("nopublish", "Cuidadores Medición 1 Cohorte 1.sav"), setclass = "tbl_df")
 ```
 
-#initial cleaning (cohort 1)
+## WAVE 1
+
+#initial cleaning (wave 1)
 ```{r}
 
-# d_raw_c1 <- d_raw_c1[-c(1:5), ] # to remove rows of data
+# d_raw_w1 <- d_raw_c1[-c(1:5), ] # to remove rows of data
 
-d_c1 <- d_raw_c1 %>% 
-  select(-2:-7, -11:-13, -203:-210) %>% # selecting out columns with non-relevant data (, -238:-255)
+d_w1 <- d_raw_w1 %>% 
+  select(-4:-6) %>% # selecting out columns with non-relevant data
   clean_names() %>% # function that formats variables' names
-  # arrange(record_id) # ordering participants ids in descending order (not doing this because record_id needs further cleaning)
+  arrange(record_id) # ordering participants ids in descending order
 ```
-
-Need to find a way to add the condition of the study:
-
-odd record_id = 1 = intervention
-even record_id = 2 = control
-
-
+# Checking duplicated ids
 ```{r}
-test <- d_c1 %>%
-  mutate(condition_in_the_study = case_when(
-    record_id >= "0201" & record_id <= "0299" |  ~ "2",
-    TRUE ~ as.character(condition_in_the_study))) # this works, but when I add the other conditions it breaks. 
-
+data.frame(table(d_w1$record_id))
 ```
 
-# before (cohort 1)
+Duplicate ids:
+1038 (confirmed in redcap: one caregiver completed survey for two children boy and girl)
+in wave 2 participant only completed survey for 1 child (the boy)
+
+# before recoding N/A
 ```{r}
-# view_df(d_c1)
+view_df(d_w1)
 ```
 
-# renaming variables (cohort 1)
-```{r}
-d1_c1 <- d_c1 %>% 
-  rename(c("new_name" = "old_name")) %>% # to match coh_
-  rename(c("new_name" = "old_name")) %>% # to match coh_
-  rename(c("new_name" = "old_name")) %>% # to match coh_
-  
-  
-  # rename(c("demo014_1_77" = "demo014_1_5")) %>% # to match coh_2
-  # rename(c("demo019_1_77" = "demo019_1_10")) %>% # to match coh_2
-```
-
-
-# Adding Variable and value labels
-```{r}
-# d3 <- d2 %>%
-#   mutate(sdq001_1 = as.numeric(sdq001_1),
-#          sdq001_1 = set_varl(sdq001_1, "Tiene en cuenta los sentimientos de otras personas"),
-#          sdq001_1 = set_vall(sdq001_1, c("No es cierto" = 0, "Algo cierto" = 1, "Totalmente cierto" = 2, "No responde" = 99))) # puede escribirse en ingles
-```
-
+I identified the following variables to convert to N/A:
+77 = No aplica
+98 = no estoy sugura
+99 = prefer not to respond
 
 # recoding missing variables as N/A
 ```{r include=FALSE}
 
 # vector with missing values in dataset
-missing_vals <- c(77, 99)
+missing_vals <- c(77, 98, 99)
 
 # function that returns true if values in vector are equal to missing_vals. The function takes a vector x, and specified values of missing data
-recode_missing <- function(x, missing_vals = c(77, 99)) {
+recode_missing <- function(x, missing_vals = c(77, 98, 99)) {
   test <- x %in% missing_vals
   ifelse(test, NA, x)
 }
 
 # function that recodes missing values to NA. The function takes a dataframe with variables with missing data, and specified values of missing data
-recode_missing_df <- function(df, missing_vals = c(77, 99)) {
+recode_missing_df <- function(df, missing_vals = c(77, 98, 99)) {
   modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
 }
 
-d2_c1 <- recode_missing_df(d1_c1) # the function strips out variable labels
+test <- recode_missing_df(d_w1) # the function strips out variable labels
+```
+
+# after recoding N/A
+```{r}
+view_df(test)
 ```
 
 
-# after (cohort 1)
+## WAVE 2
+
+
+# Loading the dataset (cohort 1 - wave 2)
 ```{r}
-# view_df(d2_c1)
+d_raw_w2 <- import(here("nopublish", "Cuidadores Medición 2 Cohorte 1.sav"), setclass = "tbl_df")
+```
+
+#initial cleaning (wave 2)
+```{r}
+
+# d_raw_w1 <- d_raw_c1[-c(1:5), ] # to remove rows of data
+
+d_w2 <- d_raw_w2 %>% 
+  select(-4:-6) %>% # selecting out columns with non-relevant data
+  clean_names() %>% # function that formats variables' names
+  arrange(record_id) # ordering participants ids in descending order
+```
+
+# Checking duplicated ids
+```{r}
+data.frame(table(d_w2$record_id))
+```
+Duplicate ids:
+no duplicated id, but oddly named ones:
+
+202.1 (complete w1, complete w2)
+202.2 (missing w1, complete w2)
+
+228.2 (missing w1, complete w2) - 228_1 complete w1, missing w2 
+403.2 (missing w1, complete w2) - 403_1 complete w1, missing w2 
+410.2 (missing w1, complete w2) - 410_1 complete w1, missing w2 
+434.1 (complete w1, complete w2) - 434_2 with no w2 or w2
+
+506.1 (missing w1, complete w2)
+506.2 (missing w1, complete w2)
+
+613.2 (missing w1, complete w2) - 613 complete w1, missing w2 
+812.2 (missing w1, complete w2) - 812_1 complete w1, missing w2 
+
+905.1 (complete w1, complete w2)
+905.2 (missing w1, complete w2)
+
+914.2 (missing w1, complete w2) - 914 complete w1, missing w2 
+939.2 (missing w1, complete w2) - 939 complete w1, missing w2 
+1015.2 (missing w1, complete w2) - 1015 complete w1, missing w2 
+1027.2 (missing w1, complete w2) - 1027_1 complete w1, missing w2 
+1041.2 (missing w1, complete w2) - 1041 complete w1, missing w2 (orange but empty, prob assessor input) 
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+
+# renaming variables (cohort 2)
+```{r}
+
+# d1_c2 <- d_c2 %>% 
+#   rename(c("demo014_1_5" = "demo014_1_77")) %>% # to match coh_1
+#   rename(c("demo019_1_10" = "demo019_1_77")) %>% # to match coh_1
 ```
 
 # descriptive stats function
@@ -130,20 +173,4 @@ descriptives <- function(df) {
        .id = "column")
   return(mean_sd)
 }
-```
-
-
------
-
-# Loading the dataset cohort 2
-```{r}
-d_raw_c2 <- import(here("nopublish", "1MdMMedicinCUIDADORE_DATA_2023-11-16_1842_cohort2.csv"), setclass = "tbl_df")
-```
-
-# renaming variables (cohort 2)
-```{r}
-
-# d1_c2 <- d_c2 %>% 
-#   rename(c("demo014_1_5" = "demo014_1_77")) %>% # to match coh_1
-#   rename(c("demo019_1_10" = "demo019_1_77")) %>% # to match coh_1
 ```
