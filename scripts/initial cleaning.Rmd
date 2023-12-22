@@ -31,17 +31,17 @@ d_raw_w1 <- import(here("nopublish", "Cuidadores Medición 1 Cohorte 1.sav"), se
 
 #initial cleaning (wave 1)
 ```{r}
-
-# d_raw_w1 <- d_raw_c1[-c(1:5), ] # to remove rows of data
-
 d_w1 <- d_raw_w1 %>% 
   select(-4:-6) %>% # selecting out columns with non-relevant data
   clean_names() %>% # function that formats variables' names
   arrange(record_id) # ordering participants ids in descending order
+
+# d_raw_w1 <- d_raw_c1[-c(1:5), ] # to remove rows of data
 ```
+
 # Checking duplicated ids
 ```{r}
-data.frame(table(d_w1$record_id))
+# data.frame(table(d_w1$record_id))
 ```
 
 Duplicate ids:
@@ -75,16 +75,192 @@ recode_missing_df <- function(df, missing_vals = c(77, 98, 99)) {
   modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
 }
 
-test <- recode_missing_df(d_w1) # the function strips out variable labels
+d_w1_clean <- recode_missing_df(d_w1) # the function strips out variable labels
 ```
 
 # after recoding N/A
 ```{r}
-view_df(test)
+# view_df(d_w1_clean)
+```
+
+##  SCALES 
+_1 = wave 1
+* = need reverse scoring
+
+# SDQ
+internalizing_1 = sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1
+externalizing_1 = sdq005_1, sdq007_1*, sdq012_1, 	sdq018_1, sdq022_1
+hyperactivity_1 = sdq002_1, sdq010_1, sdq015_1, sdq021_1* , sdq025_1*
+socialization_1 = sdq006_1, sdq011_1* , sdq014_1* , sdq019_1, sdq023_1
+prosocial_1 = sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1
+
+# PAFAS 
+(higher scores - lower construct) consistency_1 = pafas001_1, pafas003_1* , pafas004_1, pafas011_1*, 	pafas012_1
+(higher scores - higher construct) coercion_1 = pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1
+(higher scores - higher construct) encouragement_1 = pafas002_1, pafas006_1, pafas008_1
+(higher scores - higher construct) relquality_1 = pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1
+(higher scores - lower construct) famrels_1 = pafas019_1* , pafas020_1* , pafas021_1, pafas022_1
+(higher scores - higher construct) teamwork_1 = pafas023_1 , pafas024_1* , pafas025_1
+
+# Data prep: reverse scoring negatively worded items
+```{r}
+d_w1_clean2 <- d_w1_clean %>%
+  mutate(sdq007_1 = likert_reverse(sdq007_1, top = 2, bottom = 0),
+         sdq021_1 = likert_reverse(sdq021_1, top = 2, bottom = 0),
+         sdq025_1 = likert_reverse(sdq025_1, top = 2, bottom = 0),
+         sdq011_1 = likert_reverse(sdq011_1, top = 2, bottom = 0),
+         sdq014_1 = likert_reverse(sdq014_1, top = 2, bottom = 0),
+         pafas003_1 = likert_reverse(pafas003_1, top = 3, bottom = 0),
+         pafas011_1 = likert_reverse(pafas011_1, top = 3, bottom = 0),
+         pafas019_1 = likert_reverse(pafas019_1, top = 3, bottom = 0),
+         pafas020_1 = likert_reverse(pafas020_1, top = 3, bottom = 0),
+         pafas024_1 = likert_reverse(pafas024_1, top = 3, bottom = 0),
+         )
+```
+
+# scale creation
+```{r}
+w1_scales <- d_w1_clean2 %>%
+  rowwise() %>% 
+  mutate(internalizing_1 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
+         externalizing_1 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1), na.rm = TRUE),
+         hyperactivity_1 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
+         socialization_1 = mean(c(sdq006_1, sdq011_1, sdq014_1, sdq019_1, sdq023_1), na.rm = TRUE),
+         prosocial_1 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
+         consistency_1 = mean(c(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1), na.rm = TRUE),
+         coercion_1 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
+         encouragement_1 = mean(c(pafas002_1, pafas006_1, pafas008_1), na.rm = TRUE),
+         relquality_1 = mean(c(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1), na.rm = TRUE),
+         famrels_1 = mean(c(pafas019_1, pafas020_1, pafas021_1, pafas022_1), na.rm = TRUE),
+         teamwork_1 = mean(c(pafas023_1, pafas024_1, pafas025_1), na.rm = TRUE),
+         )
+
+# view_df(w1_scales)
+```
+# checking reverse scoring
+```{r}
+# d_w1_clean$sdq007_1
+# d_w1_clean$pafas003_1
+
+# w1_scales$sdq007_1
+# w1_scales$pafas003_1
+
+# Conclusion: the reverse scoring worked. 
 ```
 
 
-## WAVE 2
+# internal consistency (alpha scores)
+```{r}
+# SDQ SCALES #
+w1_scales %>%
+  select(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1) %>%
+  alpha() # internalizing 0.70
+
+w1_scales %>%
+  select(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1) %>%
+  alpha() # externalizing 0.58
+
+w1_scales %>%
+  select(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1) %>%
+  alpha() # hyperactivity 0.68
+
+w1_scales %>%
+  select(sdq006_1, sdq011_1, sdq014_1, sdq019_1, sdq023_1) %>%
+  alpha() # socialization 0.35
+
+w1_scales %>%
+  select(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1) %>%
+  alpha() # prosocial 0.60
+
+# PAFAS SCALE #
+
+w1_scales %>%
+  select(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1) %>%
+  alpha() # consistency_1 0.23 - warning: items 3 and 11 neg corr with total scale - why if it's already recoded?
+
+# d_w1_clean %>%
+#   select(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1) %>%
+#   alpha() # consistency without recoding .39
+
+w1_scales %>%
+  select(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1) %>%
+  alpha() # coercion_1 0.73
+
+w1_scales %>%
+  select(pafas002_1, pafas006_1, pafas008_1) %>%
+  alpha() # encouragement_1 0.56
+
+w1_scales %>%
+  select(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1) %>%
+  alpha() # relquality_1 0.89
+
+w1_scales %>%
+  select(pafas019_1, pafas020_1, pafas021_1, pafas022_1) %>%
+  alpha() # famrels_1 0.63
+
+w1_scales %>%
+  select(pafas023_1, pafas024_1, pafas025_1) %>%
+  alpha() # teamwork_1 0.54
+
+##### these not added to w1_scales yet ######
+
+# CORE MDM SCALES #
+d_w1_clean %>%
+	select(coremdm014_1:coremdm024_1) %>% # 12 items
+  alpha() # 0.83
+
+d_w1_clean %>%
+	select(coremdm016_1, coremdm017_1, coremdm018_1, coremdm019_1) %>% # 4 items
+  alpha() # 0.80 taps on problem solving/emotion regulation
+
+d_w1_clean %>%
+	select(coremdm013_1, coremdm014_1, coremdm015_1, coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1) %>% # 8 items
+  alpha() # 0.71 taps on supervision as in noticing child's emotions, behaviors, whereabouts
+
+# NEG problem solving #
+d_w1_clean %>%
+	select(esp008_1, esp009_1, esp010_1) %>% 
+  alpha() # 0.59
+
+# Family Communication Scale (FCS) scales
+d_w1_clean %>%
+	select(comfam001_1, comfam002_1, comfam003_1, comfam004_1, comfam005_1, comfam006_1) %>% 
+  alpha() # 0.90 family communication scale (unidimensional)
+
+d_w1_clean %>%
+	select(comfam001_1, comfam002_1, comfam005_1) %>% 
+  alpha() # 0.84 general comunication (chilean validation)
+
+d_w1_clean %>%
+	select(comfam003_1, comfam004_1, comfam006_1) %>% 
+  alpha() # 0.84 emotional expression (chilean validation)
+
+# parent involvement
+d_w1_clean %>%
+	select(involveduc001_1, involveduc002_1, involveduc003_1, involveduc004_1, involveduc005_1) %>% 
+  alpha() # 0.76 plug-in involvement (with or without 5)
+
+# parent-teacher rel
+d_w1_clean %>%
+	select(relteach001_1, relteach002_1, relteach003_1, relteach005_1, relteach006_1) %>% 
+  alpha() # relation with teacher 0.86
+
+# parent's school endorsement
+d_w1_clean %>%
+	select(endorschool001_1, endorschool002_1, endorschool003_1, endorschool004_1) %>% 
+  alpha() # school endorsement 0.89
+
+# Parent to parent relationships
+d_w1_clean %>%
+	select(relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1) %>% 
+  alpha() # relation with other parents at school 0.87
+
+```
+
+
+
+
+############################################################################################################################################################################################################### WAVE 2 ################################################################# ############################################################################################################################################
 
 
 # Loading the dataset (cohort 1 - wave 2)
@@ -94,18 +270,17 @@ d_raw_w2 <- import(here("nopublish", "Cuidadores Medición 2 Cohorte 1.sav"), se
 
 #initial cleaning (wave 2)
 ```{r}
-
-# d_raw_w1 <- d_raw_c1[-c(1:5), ] # to remove rows of data
-
 d_w2 <- d_raw_w2 %>% 
   select(-4:-6) %>% # selecting out columns with non-relevant data
   clean_names() %>% # function that formats variables' names
   arrange(record_id) # ordering participants ids in descending order
+
+# d_raw_w1 <- d_raw_c1[-c(1:5), ] # to remove rows of data
 ```
 
 # Checking duplicated ids
 ```{r}
-data.frame(table(d_w2$record_id))
+# data.frame(table(d_w2$record_id))
 ```
 Duplicate ids:
 no duplicated id, but oddly named ones:
@@ -132,8 +307,6 @@ no duplicated id, but oddly named ones:
 1015.2 (missing w1, complete w2) - 1015 complete w1, missing w2 
 1027.2 (missing w1, complete w2) - 1027_1 complete w1, missing w2 
 1041.2 (missing w1, complete w2) - 1041 complete w1, missing w2 (orange but empty, prob assessor input) 
-
-
 
 
 --------------------------------------------------------------------------------------------------------------------------
