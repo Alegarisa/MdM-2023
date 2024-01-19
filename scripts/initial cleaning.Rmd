@@ -118,25 +118,7 @@ d_w1_clean2 <- d_w1_clean %>%
          )
 ```
 
-# scale creation
-```{r}
-w1_scales <- d_w1_clean2 %>%
-  rowwise() %>% 
-  mutate(internalizing_1 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
-         externalizing_1 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1), na.rm = TRUE),
-         hyperactivity_1 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
-         socialization_1 = mean(c(sdq006_1, sdq011_1, sdq014_1, sdq019_1, sdq023_1), na.rm = TRUE),
-         prosocial_1 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
-         consistency_1 = mean(c(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1), na.rm = TRUE),
-         coercion_1 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
-         encouragement_1 = mean(c(pafas002_1, pafas006_1, pafas008_1), na.rm = TRUE),
-         relquality_1 = mean(c(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1), na.rm = TRUE),
-         famrels_1 = mean(c(pafas019_1, pafas020_1, pafas021_1, pafas022_1), na.rm = TRUE),
-         teamwork_1 = mean(c(pafas023_1, pafas024_1, pafas025_1), na.rm = TRUE),
-         )
 
-# view_df(w1_scales)
-```
 # checking reverse scoring
 ```{r}
 # d_w1_clean$sdq007_1
@@ -149,32 +131,35 @@ w1_scales <- d_w1_clean2 %>%
 ```
 
 
-# internal consistency (alpha scores)
+# internal consistency (alpha scores) # SDQ SCALES #
 ```{r}
-# SDQ SCALES #
-w1_scales %>%
+d_w1_clean2 %>%
   select(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1) %>%
   alpha() # internalizing 0.70
 
-w1_scales %>%
-  select(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1) %>%
-  alpha() # externalizing 0.58
+# d_w1_clean2 %>%
+#   select(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1) %>%
+#   alpha() # externalizing 0.58
 
-w1_scales %>%
+d_w1_clean2 %>%
+  select(sdq005_1, sdq007_1, sdq012_1, sdq018_1) %>%
+  alpha() # externalizing 0.60 Removed item on stealing
+
+d_w1_clean2 %>%
   select(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1) %>%
   alpha() # hyperactivity 0.68
 
-w1_scales %>%
+d_w1_clean2 %>%
   select(sdq006_1, sdq011_1, sdq014_1, sdq019_1, sdq023_1) %>%
   alpha() # socialization 0.35
 
-w1_scales %>%
+d_w1_clean2 %>%
   select(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1) %>%
   alpha() # prosocial 0.60
-
-# PAFAS SCALE #
-
-w1_scales %>%
+```
+# internal consistency (alpha scores) # PAFAS SCALES #
+```{r}
+d_w1_clean2 %>%
   select(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1) %>%
   alpha() # consistency_1 0.23 - warning: items 3 and 11 neg corr with total scale - why if it's already recoded?
 
@@ -182,81 +167,138 @@ w1_scales %>%
 #   select(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1) %>%
 #   alpha() # consistency without recoding .39
 
-w1_scales %>%
+d_w1_clean2 %>%
   select(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1) %>%
   alpha() # coercion_1 0.73
 
-w1_scales %>%
+d_w1_clean2 %>%
   select(pafas002_1, pafas006_1, pafas008_1) %>%
   alpha() # encouragement_1 0.56
 
-w1_scales %>%
+d_w1_clean2 %>%
   select(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1) %>%
-  alpha() # relquality_1 0.89
+  alpha() # pcpositiverel_11 0.89
 
-w1_scales %>%
+d_w1_clean2 %>%
   select(pafas019_1, pafas020_1, pafas021_1, pafas022_1) %>%
   alpha() # famrels_1 0.63
 
-w1_scales %>%
+d_w1_clean2 %>%
   select(pafas023_1, pafas024_1, pafas025_1) %>%
   alpha() # teamwork_1 0.54
+```
 
+# internal consistency (alpha scores) # FAMILY CONSTRUCTS SCALES #
+```{r}
 ##### these not added to w1_scales yet ######
 
 # CORE MDM SCALES #
-d_w1_clean %>%
-	select(coremdm014_1:coremdm024_1) %>% # 12 items
-  alpha() # 0.83
 
-d_w1_clean %>%
+d_w1_clean2 %>%
 	select(coremdm016_1, coremdm017_1, coremdm018_1, coremdm019_1) %>% # 4 items
-  alpha() # 0.80 taps on problem solving/emotion regulation
+  alpha() # 0.80 taps on parent problem solving+emotion regulation
 
-d_w1_clean %>%
-	select(coremdm013_1, coremdm014_1, coremdm015_1, coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1) %>% # 8 items
-  alpha() # 0.71 taps on supervision as in noticing child's emotions, behaviors, whereabouts
+# d_w1_clean %>%
+# 	select(coremdm014_1, coremdm015_1, coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1) %>% # 8 items
+#   alpha() # 0.72 taps on supervision as in noticing child's emotions, behaviors, whereabouts
+
+d_w1_clean2 %>%
+	select(coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1) %>% 
+  alpha() # 0.63 monitoring
+
+d_w1_clean2 %>%
+	select(coremdm014_1, coremdm015_1) %>% 
+  alpha() # 0.74 parent noticing child emotions - just 2 items-  
+
+# item coremdm013_1 doesn't play well with the rest of the items
 
 # NEG problem solving #
-d_w1_clean %>%
+d_w1_clean2 %>%
 	select(esp008_1, esp009_1, esp010_1) %>% 
   alpha() # 0.59
 
 # Family Communication Scale (FCS) scales
-d_w1_clean %>%
+d_w1_clean2 %>%
 	select(comfam001_1, comfam002_1, comfam003_1, comfam004_1, comfam005_1, comfam006_1) %>% 
   alpha() # 0.90 family communication scale (unidimensional)
 
-d_w1_clean %>%
+d_w1_clean2 %>%
 	select(comfam001_1, comfam002_1, comfam005_1) %>% 
   alpha() # 0.84 general comunication (chilean validation)
 
-d_w1_clean %>%
+d_w1_clean2 %>%
 	select(comfam003_1, comfam004_1, comfam006_1) %>% 
   alpha() # 0.84 emotional expression (chilean validation)
+```
 
+# internal consistency (alpha scores) # FAMILY-SCHOOL CONSTRUCTS SCALES #
+```{r}
 # parent involvement
-d_w1_clean %>%
+d_w1_clean2 %>%
 	select(involveduc001_1, involveduc002_1, involveduc003_1, involveduc004_1, involveduc005_1) %>% 
   alpha() # 0.76 plug-in involvement (with or without 5)
 
 # parent-teacher rel
-d_w1_clean %>%
+d_w1_clean2 %>%
 	select(relteach001_1, relteach002_1, relteach003_1, relteach005_1, relteach006_1) %>% 
   alpha() # relation with teacher 0.86
 
 # parent's school endorsement
-d_w1_clean %>%
+d_w1_clean2 %>%
 	select(endorschool001_1, endorschool002_1, endorschool003_1, endorschool004_1) %>% 
   alpha() # school endorsement 0.89
 
 # Parent to parent relationships
-d_w1_clean %>%
+d_w1_clean2 %>%
 	select(relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1) %>% 
   alpha() # relation with other parents at school 0.87
-
 ```
 
+# renaming demo variables to serve as covariates
+```{r}
+d_w1_clean3 <- d_w1_clean2 %>%
+  rename(affiliation = intro001_1,
+         gender = demo001_1,
+         age = demo002_1,
+         rel_status = demo003_1,
+         ed_level = demo004_1,
+         income_enough = demo007_1,
+         food_insec = demo008_1,
+         number_children = demo015_1,
+         prim_caregiver = demo021_1)
+```
+
+
+# scale creation
+```{r}
+w1_scales <- d_w1_clean3 %>%
+  rowwise() %>% 
+  mutate(internalizing_1 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
+         externalizing_1 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1), na.rm = TRUE),
+         hyperactivity_1 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
+         prosocial_1 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
+         coercion_1 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
+         encouragement_1 = mean(c(pafas002_1, pafas006_1, pafas008_1), na.rm = TRUE),
+         pcpositiverel_1 = mean(c(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1), na.rm = TRUE),
+         famrels_1 = mean(c(pafas019_1, pafas020_1, pafas021_1, pafas022_1), na.rm = TRUE),
+         probsol_1 = mean(c(coremdm016_1, coremdm017_1, coremdm018_1, coremdm019_1), na.rm = TRUE),
+         monitoring_1 = mean(c(coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1), na.rm = TRUE),
+         famcom_1 = mean(c(comfam001_1, comfam002_1, comfam005_1), na.rm = TRUE),
+         emoexpres_1 = mean(c(comfam003_1, comfam004_1, comfam006_1), na.rm = TRUE),
+         schinvolv_1 = mean(c(involveduc001_1, involveduc002_1, involveduc003_1, involveduc004_1, involveduc005_1), na.rm = TRUE),
+         relteach_1 = mean(c(relteach001_1, relteach002_1, relteach003_1, relteach005_1, relteach006_1), na.rm = TRUE),
+         endorse_1 = mean(c(endorschool001_1, endorschool002_1, endorschool003_1, endorschool004_1), na.rm = TRUE),
+         parpeers_1 = mean(c(relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1), na.rm = TRUE),)
+
+# view_df(w1_scales)
+```
+
+
+
+```{r}
+w1_scales %>%
+  select(record_id, condition, wave, affiliation, gender, age, rel_status, ed_level, income_enough, food_insec, number_children, prim_caregiver, internalizing_1, externalizing_1, hyperactivity_1, prosocial_1, coercion_1, encouragement_1, pcpositiverel_1, famrels_1, probsol_1, monitoring_1, famcom_1, emoexpres_1, schinvolv_1, relteach_1, endorse_1, parpeers_1)
+```
 
 
 
@@ -307,6 +349,29 @@ no duplicated id, but oddly named ones:
 1015.2 (missing w1, complete w2) - 1015 complete w1, missing w2 
 1027.2 (missing w1, complete w2) - 1027_1 complete w1, missing w2 
 1041.2 (missing w1, complete w2) - 1041 complete w1, missing w2 (orange but empty, prob assessor input) 
+
+
+```{r}
+# name <- name %>%
+#   rowwise() %>% 
+#   mutate(internalizing_2 = mean(c(sdq003_2, sdq008_2, sdq013_2, sdq016_2, sdq024_2), na.rm = TRUE),
+#          externalizing_2 = mean(c(sdq005_2, sdq007_2, sdq012_2, sdq018_2), na.rm = TRUE),
+#          hyperactivity_2 = mean(c(sdq002_2, sdq010_2, sdq015_2, sdq021_2, sdq025_2), na.rm = TRUE),
+#          prosocial_2 = mean(c(sdq001_2, sdq004_2, sdq009_2, sdq017_2, sdq020_2), na.rm = TRUE),
+#          coercion_2 = mean(c(pafas005_2, pafas007_2, pafas009_2, pafas010_2, pafas013_2), na.rm = TRUE),
+#          encouragement_2 = mean(c(pafas002_2, pafas006_2, pafas008_2), na.rm = TRUE),
+#          pcpositiverel_2 = mean(c(pafas014_2, pafas015_2, pafas016_2, pafas017_2, pafas018_2), na.rm = TRUE),
+#          famrels_2 = mean(c(pafas019_2, pafas020_2, pafas021_2, pafas022_2), na.rm = TRUE),
+#          probsol_2 = mean(c(coremdm016_2, coremdm017_2, coremdm018_2, coremdm019_2), na.rm = TRUE),
+#          monitoring_2 = mean(c(coremdm020_2, coremdm021_2, coremdm022_2, coremdm023_2, coremdm024_2), na.rm = TRUE),
+#          famcom_2 = mean(c(comfam001_2, comfam002_2, comfam005_2), na.rm = TRUE),
+#          emoexpres_2 = mean(c(comfam003_2, comfam004_2, comfam006_2), na.rm = TRUE),
+#          schinvolv_2 = mean(c(involveduc001_2, involveduc002_2, involveduc003_2, involveduc004_2, involveduc005_2), na.rm = TRUE),
+#          relteach_2 = mean(c(relteach001_2, relteach002_2, relteach003_2, relteach005_2, relteach006_2), na.rm = TRUE),
+#          endorse_2 = mean(c(endorschool001_2, endorschool002_2, endorschool003_2, endorschool004_2), na.rm = TRUE),
+#          parpeers_2 = mean(c(relpar001_2, relpar002_2, relpar003_2, relpar004_2, relpar005_2, relpar006_2), na.rm = TRUE))
+
+```
 
 
 --------------------------------------------------------------------------------------------------------------------------

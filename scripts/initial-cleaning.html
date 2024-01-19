@@ -4270,25 +4270,6 @@ higher construct) teamwork_1 = pafas023_1 , pafas024_1* , pafas025_1</p>
          pafas024_1 = likert_reverse(pafas024_1, top = 3, bottom = 0),
          )</code></pre>
 </div>
-<div id="scale-creation" class="section level1">
-<h1>scale creation</h1>
-<pre class="r"><code>w1_scales &lt;- d_w1_clean2 %&gt;%
-  rowwise() %&gt;% 
-  mutate(internalizing_1 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
-         externalizing_1 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1), na.rm = TRUE),
-         hyperactivity_1 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
-         socialization_1 = mean(c(sdq006_1, sdq011_1, sdq014_1, sdq019_1, sdq023_1), na.rm = TRUE),
-         prosocial_1 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
-         consistency_1 = mean(c(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1), na.rm = TRUE),
-         coercion_1 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
-         encouragement_1 = mean(c(pafas002_1, pafas006_1, pafas008_1), na.rm = TRUE),
-         relquality_1 = mean(c(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1), na.rm = TRUE),
-         famrels_1 = mean(c(pafas019_1, pafas020_1, pafas021_1, pafas022_1), na.rm = TRUE),
-         teamwork_1 = mean(c(pafas023_1, pafas024_1, pafas025_1), na.rm = TRUE),
-         )
-
-# view_df(w1_scales)</code></pre>
-</div>
 <div id="checking-reverse-scoring" class="section level1">
 <h1>checking reverse scoring</h1>
 <pre class="r"><code># d_w1_clean$sdq007_1
@@ -4299,10 +4280,9 @@ higher construct) teamwork_1 = pafas023_1 , pafas024_1* , pafas025_1</p>
 
 # Conclusion: the reverse scoring worked. </code></pre>
 </div>
-<div id="internal-consistency-alpha-scores" class="section level1">
-<h1>internal consistency (alpha scores)</h1>
-<pre class="r"><code># SDQ SCALES #
-w1_scales %&gt;%
+<div id="internal-consistency-alpha-scores-sdq-scales" class="section level1">
+<h1>internal consistency (alpha scores) # SDQ SCALES</h1>
+<pre class="r"><code>d_w1_clean2 %&gt;%
   select(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1) %&gt;%
   alpha() # internalizing 0.70</code></pre>
 <pre><code>## 
@@ -4340,45 +4320,46 @@ w1_scales %&gt;%
 ## sdq013_1 0.70 0.21 0.09 0.02
 ## sdq016_1 0.47 0.33 0.20 0.02
 ## sdq024_1 0.49 0.30 0.22 0.02</code></pre>
-<pre class="r"><code>w1_scales %&gt;%
-  select(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1) %&gt;%
-  alpha() # externalizing 0.58</code></pre>
+<pre class="r"><code># d_w1_clean2 %&gt;%
+#   select(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1) %&gt;%
+#   alpha() # externalizing 0.58
+
+d_w1_clean2 %&gt;%
+  select(sdq005_1, sdq007_1, sdq012_1, sdq018_1) %&gt;%
+  alpha() # externalizing 0.60 Removed item on stealing</code></pre>
 <pre><code>## 
 ## Reliability analysis   
 ## Call: alpha(x = .)
 ## 
 ##   raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r
-##       0.58      0.57    0.54      0.21 1.3 0.031 0.45 0.39     0.17
+##        0.6       0.6    0.55      0.27 1.5 0.033 0.54 0.47     0.25
 ## 
 ##     95% confidence boundaries 
 ##          lower alpha upper
-## Feldt     0.51  0.58  0.64
-## Duhachek  0.52  0.58  0.64
+## Feldt     0.53   0.6  0.66
+## Duhachek  0.53   0.6  0.66
 ## 
 ##  Reliability if an item is dropped:
 ##          raw_alpha std.alpha G6(smc) average_r  S/N alpha se  var.r med.r
-## sdq005_1      0.40      0.41    0.36      0.15 0.70    0.047 0.0062  0.15
-## sdq007_1      0.59      0.57    0.53      0.25 1.33    0.029 0.0241  0.23
-## sdq012_1      0.49      0.47    0.43      0.18 0.88    0.038 0.0200  0.14
-## sdq018_1      0.48      0.49    0.44      0.19 0.94    0.040 0.0126  0.16
-## sdq022_1      0.60      0.60    0.55      0.27 1.50    0.033 0.0167  0.25
+## sdq005_1      0.41      0.41    0.33      0.19 0.71    0.053 0.0062  0.16
+## sdq007_1      0.64      0.65    0.56      0.38 1.82    0.030 0.0074  0.40
+## sdq012_1      0.53      0.53    0.45      0.27 1.12    0.042 0.0241  0.21
+## sdq018_1      0.49      0.50    0.42      0.25 1.00    0.044 0.0188  0.21
 ## 
 ##  Item statistics 
 ##            n raw.r std.r r.cor r.drop mean   sd
-## sdq005_1 366  0.78  0.72  0.67   0.51 0.73 0.79
-## sdq007_1 370  0.57  0.53  0.29   0.23 0.60 0.70
-## sdq012_1 369  0.65  0.66  0.53   0.40 0.30 0.57
-## sdq018_1 366  0.68  0.64  0.52   0.42 0.51 0.64
-## sdq022_1 369  0.32  0.48  0.22   0.16 0.06 0.29
+## sdq005_1 366  0.79  0.76  0.68   0.51 0.73 0.79
+## sdq007_1 370  0.58  0.56  0.28   0.22 0.60 0.70
+## sdq012_1 369  0.64  0.67  0.50   0.39 0.30 0.57
+## sdq018_1 366  0.69  0.70  0.55   0.43 0.51 0.64
 ## 
 ## Non missing response frequency for each item
 ##             0    1    2 miss
 ## sdq005_1 0.49 0.30 0.21 0.03
 ## sdq007_1 0.52 0.36 0.12 0.02
 ## sdq012_1 0.75 0.20 0.05 0.02
-## sdq018_1 0.57 0.36 0.08 0.03
-## sdq022_1 0.95 0.03 0.01 0.02</code></pre>
-<pre class="r"><code>w1_scales %&gt;%
+## sdq018_1 0.57 0.36 0.08 0.03</code></pre>
+<pre class="r"><code>d_w1_clean2 %&gt;%
   select(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1) %&gt;%
   alpha() # hyperactivity 0.68</code></pre>
 <pre><code>## 
@@ -4416,7 +4397,7 @@ w1_scales %&gt;%
 ## sdq015_1 0.37 0.36 0.27 0.02
 ## sdq021_1 0.38 0.50 0.12 0.01
 ## sdq025_1 0.46 0.38 0.16 0.02</code></pre>
-<pre class="r"><code>w1_scales %&gt;%
+<pre class="r"><code>d_w1_clean2 %&gt;%
   select(sdq006_1, sdq011_1, sdq014_1, sdq019_1, sdq023_1) %&gt;%
   alpha() # socialization 0.35</code></pre>
 <pre><code>## 
@@ -4454,7 +4435,7 @@ w1_scales %&gt;%
 ## sdq014_1 0.71 0.26 0.03 0.01
 ## sdq019_1 0.66 0.24 0.10 0.04
 ## sdq023_1 0.57 0.26 0.17 0.03</code></pre>
-<pre class="r"><code>w1_scales %&gt;%
+<pre class="r"><code>d_w1_clean2 %&gt;%
   select(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1) %&gt;%
   alpha() # prosocial 0.60</code></pre>
 <pre><code>## 
@@ -4492,9 +4473,10 @@ w1_scales %&gt;%
 ## sdq009_1 0.08 0.30 0.62 0.01
 ## sdq017_1 0.04 0.20 0.76 0.01
 ## sdq020_1 0.10 0.34 0.57 0.02</code></pre>
-<pre class="r"><code># PAFAS SCALE #
-
-w1_scales %&gt;%
+</div>
+<div id="internal-consistency-alpha-scores-pafas-scales" class="section level1">
+<h1>internal consistency (alpha scores) # PAFAS SCALES</h1>
+<pre class="r"><code>d_w1_clean2 %&gt;%
   select(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1) %&gt;%
   alpha() # consistency_1 0.23 - warning: items 3 and 11 neg corr with total scale - why if it&#39;s already recoded?</code></pre>
 <pre><code>## Warning in alpha(.): Some items were negatively correlated with the total scale and probably 
@@ -4542,7 +4524,7 @@ w1_scales %&gt;%
 #   select(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1) %&gt;%
 #   alpha() # consistency without recoding .39
 
-w1_scales %&gt;%
+d_w1_clean2 %&gt;%
   select(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1) %&gt;%
   alpha() # coercion_1 0.73</code></pre>
 <pre><code>## 
@@ -4580,7 +4562,7 @@ w1_scales %&gt;%
 ## pafas009_1 0.29 0.26 0.17 0.27 0.03
 ## pafas010_1 0.16 0.27 0.23 0.34 0.02
 ## pafas013_1 0.20 0.47 0.15 0.17 0.02</code></pre>
-<pre class="r"><code>w1_scales %&gt;%
+<pre class="r"><code>d_w1_clean2 %&gt;%
   select(pafas002_1, pafas006_1, pafas008_1) %&gt;%
   alpha() # encouragement_1 0.56</code></pre>
 <pre><code>## 
@@ -4612,9 +4594,9 @@ w1_scales %&gt;%
 ## pafas002_1 0.13 0.34 0.20 0.34 0.02
 ## pafas006_1 0.08 0.22 0.23 0.47 0.03
 ## pafas008_1 0.01 0.11 0.24 0.63 0.01</code></pre>
-<pre class="r"><code>w1_scales %&gt;%
+<pre class="r"><code>d_w1_clean2 %&gt;%
   select(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1) %&gt;%
-  alpha() # relquality_1 0.89</code></pre>
+  alpha() # pcpositiverel_11 0.89</code></pre>
 <pre><code>## 
 ## Reliability analysis   
 ## Call: alpha(x = .)
@@ -4650,7 +4632,7 @@ w1_scales %&gt;%
 ## pafas016_1 0.01 0.05 0.20 0.75 0.01
 ## pafas017_1 0.01 0.03 0.22 0.74 0.01
 ## pafas018_1 0.01 0.05 0.23 0.71 0.01</code></pre>
-<pre class="r"><code>w1_scales %&gt;%
+<pre class="r"><code>d_w1_clean2 %&gt;%
   select(pafas019_1, pafas020_1, pafas021_1, pafas022_1) %&gt;%
   alpha() # famrels_1 0.63</code></pre>
 <pre><code>## 
@@ -4685,7 +4667,7 @@ w1_scales %&gt;%
 ## pafas020_1 0.50 0.30 0.17 0.02 0.01
 ## pafas021_1 0.37 0.47 0.09 0.07 0.04
 ## pafas022_1 0.52 0.31 0.09 0.08 0.03</code></pre>
-<pre class="r"><code>w1_scales %&gt;%
+<pre class="r"><code>d_w1_clean2 %&gt;%
   select(pafas023_1, pafas024_1, pafas025_1) %&gt;%
   alpha() # teamwork_1 0.54</code></pre>
 <pre><code>## 
@@ -4717,71 +4699,16 @@ w1_scales %&gt;%
 ## pafas023_1 0.17 0.16 0.20 0.47 0.17
 ## pafas024_1 0.11 0.07 0.16 0.66 0.26
 ## pafas025_1 0.11 0.10 0.24 0.55 0.23</code></pre>
+</div>
+<div id="internal-consistency-alpha-scores-family-constructs-scales" class="section level1">
+<h1>internal consistency (alpha scores) # FAMILY CONSTRUCTS SCALES</h1>
 <pre class="r"><code>##### these not added to w1_scales yet ######
 
 # CORE MDM SCALES #
-d_w1_clean %&gt;%
-    select(coremdm014_1:coremdm024_1) %&gt;% # 12 items
-  alpha() # 0.83</code></pre>
-<pre><code>## 
-## Reliability analysis   
-## Call: alpha(x = .)
-## 
-##   raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r
-##       0.83      0.84    0.86       0.3 5.1 0.013  2.8 0.65     0.29
-## 
-##     95% confidence boundaries 
-##          lower alpha upper
-## Feldt      0.8  0.83  0.85
-## Duhachek   0.8  0.83  0.85
-## 
-##  Reliability if an item is dropped:
-##              raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
-## coremdm014_1      0.81      0.82    0.84      0.29 4.5    0.015 0.030  0.22
-## coremdm015_1      0.80      0.81    0.84      0.28 4.4    0.015 0.029  0.22
-## coremdm016_1      0.81      0.82    0.85      0.29 4.5    0.015 0.029  0.25
-## coremdm017_1      0.80      0.81    0.84      0.28 4.2    0.015 0.028  0.22
-## coremdm018_1      0.81      0.82    0.85      0.30 4.6    0.014 0.029  0.25
-## coremdm019_1      0.80      0.81    0.84      0.28 4.2    0.015 0.027  0.22
-## coremdm013_1      0.84      0.84    0.87      0.32 5.3    0.012 0.030  0.38
-## coremdm020_1      0.81      0.81    0.85      0.29 4.4    0.015 0.030  0.22
-## coremdm021_1      0.81      0.82    0.85      0.29 4.5    0.014 0.031  0.22
-## coremdm022_1      0.82      0.83    0.86      0.31 4.9    0.014 0.032  0.34
-## coremdm023_1      0.83      0.84    0.85      0.32 5.2    0.013 0.025  0.38
-## coremdm024_1      0.84      0.84    0.85      0.33 5.3    0.012 0.024  0.38
-## 
-##  Item statistics 
-##                n raw.r std.r r.cor r.drop mean   sd
-## coremdm014_1 370  0.68  0.66  0.63   0.58  2.4 1.24
-## coremdm015_1 368  0.72  0.70  0.68   0.62  2.6 1.18
-## coremdm016_1 371  0.65  0.64  0.61   0.55  2.4 1.09
-## coremdm017_1 371  0.73  0.75  0.73   0.67  3.0 0.98
-## coremdm018_1 367  0.62  0.61  0.56   0.51  2.7 1.14
-## coremdm019_1 369  0.74  0.75  0.74   0.67  2.8 1.07
-## coremdm013_1 364  0.43  0.40  0.29   0.27  2.2 1.34
-## coremdm020_1 366  0.69  0.69  0.65   0.60  2.9 1.03
-## coremdm021_1 368  0.65  0.66  0.62   0.56  3.2 0.97
-## coremdm022_1 364  0.49  0.53  0.46   0.41  3.6 0.72
-## coremdm023_1 368  0.39  0.40  0.35   0.28  3.3 0.97
-## coremdm024_1 364  0.40  0.38  0.32   0.24  2.9 1.30
-## 
-## Non missing response frequency for each item
-##                 0    1    2    3    4 miss
-## coremdm014_1 0.09 0.12 0.29 0.24 0.24 0.02
-## coremdm015_1 0.07 0.10 0.27 0.30 0.26 0.02
-## coremdm016_1 0.07 0.10 0.38 0.29 0.16 0.01
-## coremdm017_1 0.02 0.05 0.21 0.37 0.35 0.01
-## coremdm018_1 0.06 0.08 0.25 0.32 0.29 0.02
-## coremdm019_1 0.04 0.07 0.25 0.34 0.30 0.02
-## coremdm013_1 0.17 0.09 0.29 0.24 0.21 0.03
-## coremdm020_1 0.04 0.04 0.24 0.36 0.32 0.03
-## coremdm021_1 0.02 0.04 0.15 0.33 0.46 0.02
-## coremdm022_1 0.01 0.01 0.05 0.27 0.66 0.03
-## coremdm023_1 0.02 0.04 0.10 0.27 0.57 0.02
-## coremdm024_1 0.09 0.07 0.12 0.24 0.48 0.03</code></pre>
-<pre class="r"><code>d_w1_clean %&gt;%
+
+d_w1_clean2 %&gt;%
     select(coremdm016_1, coremdm017_1, coremdm018_1, coremdm019_1) %&gt;% # 4 items
-  alpha() # 0.80 taps on problem solving/emotion regulation</code></pre>
+  alpha() # 0.80 taps on parent problem solving+emotion regulation</code></pre>
 <pre><code>## 
 ## Reliability analysis   
 ## Call: alpha(x = .)
@@ -4814,55 +4741,81 @@ d_w1_clean %&gt;%
 ## coremdm017_1 0.02 0.05 0.21 0.37 0.35 0.01
 ## coremdm018_1 0.06 0.08 0.25 0.32 0.29 0.02
 ## coremdm019_1 0.04 0.07 0.25 0.34 0.30 0.02</code></pre>
-<pre class="r"><code>d_w1_clean %&gt;%
-    select(coremdm013_1, coremdm014_1, coremdm015_1, coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1) %&gt;% # 8 items
-  alpha() # 0.71 taps on supervision as in noticing child&#39;s emotions, behaviors, whereabouts</code></pre>
+<pre class="r"><code># d_w1_clean %&gt;%
+#   select(coremdm014_1, coremdm015_1, coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1) %&gt;% # 8 items
+#   alpha() # 0.72 taps on supervision as in noticing child&#39;s emotions, behaviors, whereabouts
+
+d_w1_clean2 %&gt;%
+    select(coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1) %&gt;% 
+  alpha() # 0.63 monitoring</code></pre>
 <pre><code>## 
 ## Reliability analysis   
 ## Call: alpha(x = .)
 ## 
 ##   raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r
-##       0.71      0.73    0.76      0.25 2.6 0.023  2.9 0.65      0.2
+##       0.63      0.65    0.67      0.27 1.8 0.031  3.2 0.65     0.19
 ## 
 ##     95% confidence boundaries 
 ##          lower alpha upper
-## Feldt     0.66  0.71  0.75
-## Duhachek  0.67  0.71  0.76
+## Feldt     0.57  0.63  0.69
+## Duhachek  0.57  0.63  0.69
 ## 
 ##  Reliability if an item is dropped:
 ##              raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
-## coremdm013_1      0.72      0.73    0.77      0.28 2.7    0.022 0.030  0.20
-## coremdm014_1      0.66      0.68    0.71      0.24 2.2    0.027 0.026  0.19
-## coremdm015_1      0.65      0.67    0.70      0.23 2.1    0.028 0.023  0.19
-## coremdm020_1      0.67      0.68    0.72      0.23 2.1    0.026 0.028  0.19
-## coremdm021_1      0.67      0.68    0.72      0.23 2.1    0.026 0.028  0.19
-## coremdm022_1      0.69      0.70    0.74      0.25 2.3    0.025 0.032  0.18
-## coremdm023_1      0.69      0.71    0.71      0.26 2.5    0.024 0.022  0.21
-## coremdm024_1      0.71      0.72    0.72      0.27 2.6    0.022 0.020  0.21
+## coremdm020_1      0.60      0.61    0.64      0.28 1.6    0.033 0.052  0.19
+## coremdm021_1      0.57      0.58    0.59      0.25 1.4    0.035 0.047  0.16
+## coremdm022_1      0.59      0.60    0.62      0.27 1.5    0.035 0.052  0.15
+## coremdm023_1      0.52      0.57    0.53      0.25 1.3    0.041 0.027  0.21
+## coremdm024_1      0.59      0.61    0.56      0.28 1.6    0.034 0.018  0.25
 ## 
 ##  Item statistics 
 ##                n raw.r std.r r.cor r.drop mean   sd
-## coremdm013_1 364  0.49  0.46  0.31   0.27  2.2 1.34
-## coremdm014_1 370  0.68  0.64  0.59   0.50  2.4 1.24
-## coremdm015_1 368  0.70  0.68  0.65   0.54  2.6 1.18
-## coremdm020_1 366  0.64  0.65  0.58   0.49  2.9 1.03
-## coremdm021_1 368  0.63  0.66  0.59   0.48  3.2 0.97
-## coremdm022_1 364  0.51  0.57  0.47   0.39  3.6 0.72
-## coremdm023_1 368  0.51  0.53  0.47   0.36  3.3 0.97
-## coremdm024_1 364  0.52  0.49  0.43   0.29  2.9 1.30
+## coremdm020_1 366  0.61  0.61  0.44   0.33  2.9 1.03
+## coremdm021_1 368  0.64  0.67  0.55   0.39  3.2 0.97
+## coremdm022_1 364  0.56  0.64  0.49   0.37  3.6 0.72
+## coremdm023_1 368  0.70  0.67  0.62   0.50  3.3 0.97
+## coremdm024_1 364  0.70  0.62  0.54   0.38  2.9 1.30
 ## 
 ## Non missing response frequency for each item
 ##                 0    1    2    3    4 miss
-## coremdm013_1 0.17 0.09 0.29 0.24 0.21 0.03
-## coremdm014_1 0.09 0.12 0.29 0.24 0.24 0.02
-## coremdm015_1 0.07 0.10 0.27 0.30 0.26 0.02
 ## coremdm020_1 0.04 0.04 0.24 0.36 0.32 0.03
 ## coremdm021_1 0.02 0.04 0.15 0.33 0.46 0.02
 ## coremdm022_1 0.01 0.01 0.05 0.27 0.66 0.03
 ## coremdm023_1 0.02 0.04 0.10 0.27 0.57 0.02
 ## coremdm024_1 0.09 0.07 0.12 0.24 0.48 0.03</code></pre>
-<pre class="r"><code># NEG problem solving #
-d_w1_clean %&gt;%
+<pre class="r"><code>d_w1_clean2 %&gt;%
+    select(coremdm014_1, coremdm015_1) %&gt;% 
+  alpha() # 0.74 parent noticing child emotions - just 2 items-  </code></pre>
+<pre><code>## 
+## Reliability analysis   
+## Call: alpha(x = .)
+## 
+##   raw_alpha std.alpha G6(smc) average_r S/N   ase mean  sd median_r
+##       0.74      0.74    0.59      0.59 2.9 0.027  2.5 1.1     0.59
+## 
+##     95% confidence boundaries 
+##          lower alpha upper
+## Feldt     0.68  0.74  0.79
+## Duhachek  0.69  0.74  0.79
+## 
+##  Reliability if an item is dropped:
+##              raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
+## coremdm014_1      0.62      0.59    0.35      0.59 1.4       NA     0  0.59
+## coremdm015_1      0.56      0.59    0.35      0.59 1.4       NA     0  0.59
+## 
+##  Item statistics 
+##                n raw.r std.r r.cor r.drop mean  sd
+## coremdm014_1 370  0.90  0.89  0.69   0.59  2.4 1.2
+## coremdm015_1 368  0.89  0.89  0.69   0.59  2.6 1.2
+## 
+## Non missing response frequency for each item
+##                 0    1    2    3    4 miss
+## coremdm014_1 0.09 0.12 0.29 0.24 0.24 0.02
+## coremdm015_1 0.07 0.10 0.27 0.30 0.26 0.02</code></pre>
+<pre class="r"><code># item coremdm013_1 doesn&#39;t play well with the rest of the items
+
+# NEG problem solving #
+d_w1_clean2 %&gt;%
     select(esp008_1, esp009_1, esp010_1) %&gt;% 
   alpha() # 0.59</code></pre>
 <pre><code>## 
@@ -4895,7 +4848,7 @@ d_w1_clean %&gt;%
 ## esp009_1 0.46 0.26 0.09 0.11 0.08 0.05
 ## esp010_1 0.30 0.22 0.11 0.22 0.15 0.02</code></pre>
 <pre class="r"><code># Family Communication Scale (FCS) scales
-d_w1_clean %&gt;%
+d_w1_clean2 %&gt;%
     select(comfam001_1, comfam002_1, comfam003_1, comfam004_1, comfam005_1, comfam006_1) %&gt;% 
   alpha() # 0.90 family communication scale (unidimensional)</code></pre>
 <pre><code>## 
@@ -4936,7 +4889,7 @@ d_w1_clean %&gt;%
 ## comfam004_1 0.05 0.12 0.12 0.21 0.51 0.03
 ## comfam005_1 0.04 0.07 0.21 0.24 0.45 0.03
 ## comfam006_1 0.02 0.09 0.15 0.19 0.54 0.02</code></pre>
-<pre class="r"><code>d_w1_clean %&gt;%
+<pre class="r"><code>d_w1_clean2 %&gt;%
     select(comfam001_1, comfam002_1, comfam005_1) %&gt;% 
   alpha() # 0.84 general comunication (chilean validation)</code></pre>
 <pre><code>## 
@@ -4968,7 +4921,7 @@ d_w1_clean %&gt;%
 ## comfam001_1 0.04 0.07 0.15 0.22 0.52 0.03
 ## comfam002_1 0.03 0.08 0.15 0.24 0.50 0.02
 ## comfam005_1 0.04 0.07 0.21 0.24 0.45 0.03</code></pre>
-<pre class="r"><code>d_w1_clean %&gt;%
+<pre class="r"><code>d_w1_clean2 %&gt;%
     select(comfam003_1, comfam004_1, comfam006_1) %&gt;% 
   alpha() # 0.84 emotional expression (chilean validation)</code></pre>
 <pre><code>## 
@@ -5000,8 +4953,12 @@ d_w1_clean %&gt;%
 ## comfam003_1 0.05 0.08 0.12 0.22 0.53 0.03
 ## comfam004_1 0.05 0.12 0.12 0.21 0.51 0.03
 ## comfam006_1 0.02 0.09 0.15 0.19 0.54 0.02</code></pre>
+</div>
+<div id="internal-consistency-alpha-scores-family-school-constructs-scales" class="section level1">
+<h1>internal consistency (alpha scores) # FAMILY-SCHOOL CONSTRUCTS
+SCALES</h1>
 <pre class="r"><code># parent involvement
-d_w1_clean %&gt;%
+d_w1_clean2 %&gt;%
     select(involveduc001_1, involveduc002_1, involveduc003_1, involveduc004_1, involveduc005_1) %&gt;% 
   alpha() # 0.76 plug-in involvement (with or without 5)</code></pre>
 <pre><code>## 
@@ -5040,7 +4997,7 @@ d_w1_clean %&gt;%
 ## involveduc004_1 0.11 0.09 0.35 0.12 0.32 0.03
 ## involveduc005_1 0.01 0.02 0.11 0.16 0.71 0.03</code></pre>
 <pre class="r"><code># parent-teacher rel
-d_w1_clean %&gt;%
+d_w1_clean2 %&gt;%
     select(relteach001_1, relteach002_1, relteach003_1, relteach005_1, relteach006_1) %&gt;% 
   alpha() # relation with teacher 0.86</code></pre>
 <pre><code>## 
@@ -5079,7 +5036,7 @@ d_w1_clean %&gt;%
 ## relteach005_1 0.03 0.03 0.04 0.25 0.65 0.03
 ## relteach006_1 0.02 0.02 0.09 0.30 0.57 0.03</code></pre>
 <pre class="r"><code># parent&#39;s school endorsement
-d_w1_clean %&gt;%
+d_w1_clean2 %&gt;%
     select(endorschool001_1, endorschool002_1, endorschool003_1, endorschool004_1) %&gt;% 
   alpha() # school endorsement 0.89</code></pre>
 <pre><code>## 
@@ -5120,7 +5077,7 @@ d_w1_clean %&gt;%
 ## endorschool003_1 0.02 0.00 0.07 0.24 0.66 0.02
 ## endorschool004_1 0.02 0.01 0.01 0.20 0.77 0.02</code></pre>
 <pre class="r"><code># Parent to parent relationships
-d_w1_clean %&gt;%
+d_w1_clean2 %&gt;%
     select(relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1) %&gt;% 
   alpha() # relation with other parents at school 0.87</code></pre>
 <pre><code>## 
@@ -5161,6 +5118,65 @@ d_w1_clean %&gt;%
 ## relpar004_1 0.24 0.24 0.19 0.33 0.03
 ## relpar005_1 0.25 0.25 0.17 0.33 0.03
 ## relpar006_1 0.01 0.07 0.21 0.72 0.03</code></pre>
+</div>
+<div id="renaming-demo-variables-to-serve-as-covariates" class="section level1">
+<h1>renaming demo variables to serve as covariates</h1>
+<pre class="r"><code>d_w1_clean3 &lt;- d_w1_clean2 %&gt;%
+  rename(affiliation = intro001_1,
+         gender = demo001_1,
+         age = demo002_1,
+         rel_status = demo003_1,
+         ed_level = demo004_1,
+         income_enough = demo007_1,
+         food_insec = demo008_1,
+         number_children = demo015_1,
+         prim_caregiver = demo021_1)</code></pre>
+</div>
+<div id="scale-creation" class="section level1">
+<h1>scale creation</h1>
+<pre class="r"><code>w1_scales &lt;- d_w1_clean3 %&gt;%
+  rowwise() %&gt;% 
+  mutate(internalizing_1 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
+         externalizing_1 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1), na.rm = TRUE),
+         hyperactivity_1 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
+         prosocial_1 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
+         coercion_1 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
+         encouragement_1 = mean(c(pafas002_1, pafas006_1, pafas008_1), na.rm = TRUE),
+         pcpositiverel_1 = mean(c(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1), na.rm = TRUE),
+         famrels_1 = mean(c(pafas019_1, pafas020_1, pafas021_1, pafas022_1), na.rm = TRUE),
+         probsol_1 = mean(c(coremdm016_1, coremdm017_1, coremdm018_1, coremdm019_1), na.rm = TRUE),
+         monitoring_1 = mean(c(coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1), na.rm = TRUE),
+         famcom_1 = mean(c(comfam001_1, comfam002_1, comfam005_1), na.rm = TRUE),
+         emoexpres_1 = mean(c(comfam003_1, comfam004_1, comfam006_1), na.rm = TRUE),
+         schinvolv_1 = mean(c(involveduc001_1, involveduc002_1, involveduc003_1, involveduc004_1, involveduc005_1), na.rm = TRUE),
+         relteach_1 = mean(c(relteach001_1, relteach002_1, relteach003_1, relteach005_1, relteach006_1), na.rm = TRUE),
+         endorse_1 = mean(c(endorschool001_1, endorschool002_1, endorschool003_1, endorschool004_1), na.rm = TRUE),
+         parpeers_1 = mean(c(relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1), na.rm = TRUE),)
+
+# view_df(w1_scales)</code></pre>
+<pre class="r"><code>w1_scales %&gt;%
+  select(record_id, condition, wave, affiliation, gender, age, rel_status, ed_level, income_enough, food_insec, number_children, prim_caregiver, internalizing_1, externalizing_1, hyperactivity_1, prosocial_1, coercion_1, encouragement_1, pcpositiverel_1, famrels_1, probsol_1, monitoring_1, famcom_1, emoexpres_1, schinvolv_1, relteach_1, endorse_1, parpeers_1)</code></pre>
+<pre><code>## # A tibble: 376 × 28
+## # Rowwise: 
+##    record_id condition  wave affiliation gender   age rel_status ed_level
+##        &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+##  1       201         2     1 1                1    27          2        9
+##  2       202         2     1 1                1    32          4        8
+##  3       203         2     1 1                1    38          4        8
+##  4       204         2     1 1                1    38          1        7
+##  5       213         2     1 1                1    36          4        7
+##  6       214         2     1 1                1    32          4        7
+##  7       215         2     1 1                1    27          2        8
+##  8       216         2     1 1                1    39          3        8
+##  9       217         2     1 2                2    33          1        9
+## 10       225         2     1 1                1    49          3        3
+## # ℹ 366 more rows
+## # ℹ 20 more variables: income_enough &lt;dbl&gt;, food_insec &lt;dbl&gt;,
+## #   number_children &lt;dbl&gt;, prim_caregiver &lt;dbl&gt;, internalizing_1 &lt;dbl&gt;,
+## #   externalizing_1 &lt;dbl&gt;, hyperactivity_1 &lt;dbl&gt;, prosocial_1 &lt;dbl&gt;,
+## #   coercion_1 &lt;dbl&gt;, encouragement_1 &lt;dbl&gt;, pcpositiverel_1 &lt;dbl&gt;,
+## #   famrels_1 &lt;dbl&gt;, probsol_1 &lt;dbl&gt;, monitoring_1 &lt;dbl&gt;, famcom_1 &lt;dbl&gt;,
+## #   emoexpres_1 &lt;dbl&gt;, schinvolv_1 &lt;dbl&gt;, relteach_1 &lt;dbl&gt;, endorse_1 &lt;dbl&gt;, …</code></pre>
 <div id="wave-2" class="section level207">
 <p class="heading">WAVE 2
 #################################################################</p>
@@ -5196,6 +5212,24 @@ w1, complete w2) - 1015 complete w1, missing w2 1027.2 (missing w1,
 complete w2) - 1027_1 complete w1, missing w2 1041.2 (missing w1,
 complete w2) - 1041 complete w1, missing w2 (orange but empty, prob
 assessor input)</p>
+<pre class="r"><code># name &lt;- name %&gt;%
+#   rowwise() %&gt;% 
+#   mutate(internalizing_2 = mean(c(sdq003_2, sdq008_2, sdq013_2, sdq016_2, sdq024_2), na.rm = TRUE),
+#          externalizing_2 = mean(c(sdq005_2, sdq007_2, sdq012_2, sdq018_2), na.rm = TRUE),
+#          hyperactivity_2 = mean(c(sdq002_2, sdq010_2, sdq015_2, sdq021_2, sdq025_2), na.rm = TRUE),
+#          prosocial_2 = mean(c(sdq001_2, sdq004_2, sdq009_2, sdq017_2, sdq020_2), na.rm = TRUE),
+#          coercion_2 = mean(c(pafas005_2, pafas007_2, pafas009_2, pafas010_2, pafas013_2), na.rm = TRUE),
+#          encouragement_2 = mean(c(pafas002_2, pafas006_2, pafas008_2), na.rm = TRUE),
+#          pcpositiverel_2 = mean(c(pafas014_2, pafas015_2, pafas016_2, pafas017_2, pafas018_2), na.rm = TRUE),
+#          famrels_2 = mean(c(pafas019_2, pafas020_2, pafas021_2, pafas022_2), na.rm = TRUE),
+#          probsol_2 = mean(c(coremdm016_2, coremdm017_2, coremdm018_2, coremdm019_2), na.rm = TRUE),
+#          monitoring_2 = mean(c(coremdm020_2, coremdm021_2, coremdm022_2, coremdm023_2, coremdm024_2), na.rm = TRUE),
+#          famcom_2 = mean(c(comfam001_2, comfam002_2, comfam005_2), na.rm = TRUE),
+#          emoexpres_2 = mean(c(comfam003_2, comfam004_2, comfam006_2), na.rm = TRUE),
+#          schinvolv_2 = mean(c(involveduc001_2, involveduc002_2, involveduc003_2, involveduc004_2, involveduc005_2), na.rm = TRUE),
+#          relteach_2 = mean(c(relteach001_2, relteach002_2, relteach003_2, relteach005_2, relteach006_2), na.rm = TRUE),
+#          endorse_2 = mean(c(endorschool001_2, endorschool002_2, endorschool003_2, endorschool004_2), na.rm = TRUE),
+#          parpeers_2 = mean(c(relpar001_2, relpar002_2, relpar003_2, relpar004_2, relpar005_2, relpar006_2), na.rm = TRUE))</code></pre>
 <div id="section" class="section level2">
 <h2>————————————————————————————————————————–</h2>
 <hr />
