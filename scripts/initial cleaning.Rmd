@@ -41,16 +41,16 @@ d_w1 <- d_raw_w1 %>%
 
 # Checking duplicated ids
 ```{r}
-# data.frame(table(d_w1$record_id))
+# data.frame(table(d_w1$record_id)) # 1 duplicate id 1038
 ```
 
 Duplicate ids:
-1038 (confirmed in redcap: one caregiver completed survey for two children boy and girl)
+1038 (confirmed in redcap: one caregiver completed survey for two children, boy (grandchild) and girl(daughter))
 in wave 2 participant only completed survey for 1 child (the boy)
 
 # before recoding N/A
 ```{r}
-view_df(d_w1)
+# view_df(d_w1)
 ```
 
 I identified the following variables to convert to N/A:
@@ -254,9 +254,22 @@ d_w1_clean2 %>%
   alpha() # relation with other parents at school 0.87
 ```
 
+# internal consistency (alpha scores) #neighborhood/community safety
+```{r}
+d_w1_clean2 %>%
+	select(safeneigh001_1, safeneigh002_1, safeneigh003_1, safeneigh006_1) %>% 
+  alpha() # 0.69 unsafe community
+
+d_w1_clean2 %>%
+	select(safeneigh004_1, safeneigh005_1, safeneigh007_1, safeneigh008_1) %>% 
+  alpha() # 0.57 safe community
+```
+
+
 # renaming demo variables to serve as covariates
 ```{r}
 d_w1_clean3 <- d_w1_clean2 %>%
+  mutate(record_id = as.character(record_id)) %>%
   rename(affiliation = intro001_1,
          gender = demo001_1,
          age = demo002_1,
@@ -288,7 +301,8 @@ w1_scales <- d_w1_clean3 %>%
          schinvolv_1 = mean(c(involveduc001_1, involveduc002_1, involveduc003_1, involveduc004_1, involveduc005_1), na.rm = TRUE),
          relteach_1 = mean(c(relteach001_1, relteach002_1, relteach003_1, relteach005_1, relteach006_1), na.rm = TRUE),
          endorse_1 = mean(c(endorschool001_1, endorschool002_1, endorschool003_1, endorschool004_1), na.rm = TRUE),
-         parpeers_1 = mean(c(relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1), na.rm = TRUE),)
+         parpeers_1 = mean(c(relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1), na.rm = TRUE),
+         unsafeneigh_1 = mean(c(safeneigh001_1, safeneigh002_1, safeneigh003_1, safeneigh006_1), na.rm = TRUE))
 
 # view_df(w1_scales)
 ```
@@ -296,8 +310,8 @@ w1_scales <- d_w1_clean3 %>%
 
 
 ```{r}
-w1_scales %>%
-  select(record_id, condition, wave, affiliation, gender, age, rel_status, ed_level, income_enough, food_insec, number_children, prim_caregiver, internalizing_1, externalizing_1, hyperactivity_1, prosocial_1, coercion_1, encouragement_1, pcpositiverel_1, famrels_1, probsol_1, monitoring_1, famcom_1, emoexpres_1, schinvolv_1, relteach_1, endorse_1, parpeers_1)
+w1_scales_final <- w1_scales %>%
+  select(record_id, condition, wave, affiliation, gender, age, rel_status, ed_level, income_enough, food_insec, number_children, prim_caregiver, internalizing_1, externalizing_1, hyperactivity_1, prosocial_1, coercion_1, encouragement_1, pcpositiverel_1, famrels_1, probsol_1, monitoring_1, famcom_1, emoexpres_1, schinvolv_1, relteach_1, endorse_1, parpeers_1, unsafeneigh_1)
 ```
 
 
@@ -320,95 +334,165 @@ d_w2 <- d_raw_w2 %>%
 # d_raw_w1 <- d_raw_c1[-c(1:5), ] # to remove rows of data
 ```
 
-# Checking duplicated ids
 ```{r}
-# data.frame(table(d_w2$record_id))
+d_w2_clean <- d_w2 %>% 
+  mutate(record_id = as.character(record_id),
+         record_id = ifelse(record_id == 202.1, 202, record_id),
+         record_id = ifelse(record_id == 434.1, 434, record_id),
+         record_id = ifelse(record_id == 506.1, 506, record_id),
+         record_id = ifelse(record_id == 905.1, 905, record_id))
+  
 ```
 Duplicate ids:
 no duplicated id, but oddly named ones:
 
-202.1 (complete w1, complete w2)
+          WAVE 2                -             WAVE 1
+202.1 (complete w1, complete w2): CHANGED TO 201
 202.2 (missing w1, complete w2)
 
-228.2 (missing w1, complete w2) - 228_1 complete w1, missing w2 
-403.2 (missing w1, complete w2) - 403_1 complete w1, missing w2 
-410.2 (missing w1, complete w2) - 410_1 complete w1, missing w2 
-434.1 (complete w1, complete w2) - 434_2 with no w2 or w2
+228.2 (missing w1, complete w2) - 228 complete w1, missing w2 
+403.2 (missing w1, complete w2) - 403 complete w1, missing w2 
+410.2 (missing w1, complete w2) - 410 complete w1, missing w2 
 
-506.1 (missing w1, complete w2)
+434.1 (complete w1, complete w2): CHANGED TO 401
+
+506.1 (missing w1, complete w2): CHANGED TO 506
 506.2 (missing w1, complete w2)
 
 613.2 (missing w1, complete w2) - 613 complete w1, missing w2 
-812.2 (missing w1, complete w2) - 812_1 complete w1, missing w2 
+812.2 (missing w1, complete w2) - 812 complete w1, missing w2 
 
-905.1 (complete w1, complete w2)
+905.1 (complete w1, complete w2): CHANGED TO 905
 905.2 (missing w1, complete w2)
 
 914.2 (missing w1, complete w2) - 914 complete w1, missing w2 
 939.2 (missing w1, complete w2) - 939 complete w1, missing w2 
 1015.2 (missing w1, complete w2) - 1015 complete w1, missing w2 
-1027.2 (missing w1, complete w2) - 1027_1 complete w1, missing w2 
+1027.2 (missing w1, complete w2) - 1027 complete w1, missing w2 
 1041.2 (missing w1, complete w2) - 1041 complete w1, missing w2 (orange but empty, prob assessor input) 
 
+ONCE THIS IS DONE, JOIN THE DATASETS AND CHECK THAT IDENTICAL IDS CORRESPOND TO THE SAME ROLE IN WAVE 1 AND WAVE 2
 
+# Checking duplicated ids
 ```{r}
-# name <- name %>%
-#   rowwise() %>% 
-#   mutate(internalizing_2 = mean(c(sdq003_2, sdq008_2, sdq013_2, sdq016_2, sdq024_2), na.rm = TRUE),
-#          externalizing_2 = mean(c(sdq005_2, sdq007_2, sdq012_2, sdq018_2), na.rm = TRUE),
-#          hyperactivity_2 = mean(c(sdq002_2, sdq010_2, sdq015_2, sdq021_2, sdq025_2), na.rm = TRUE),
-#          prosocial_2 = mean(c(sdq001_2, sdq004_2, sdq009_2, sdq017_2, sdq020_2), na.rm = TRUE),
-#          coercion_2 = mean(c(pafas005_2, pafas007_2, pafas009_2, pafas010_2, pafas013_2), na.rm = TRUE),
-#          encouragement_2 = mean(c(pafas002_2, pafas006_2, pafas008_2), na.rm = TRUE),
-#          pcpositiverel_2 = mean(c(pafas014_2, pafas015_2, pafas016_2, pafas017_2, pafas018_2), na.rm = TRUE),
-#          famrels_2 = mean(c(pafas019_2, pafas020_2, pafas021_2, pafas022_2), na.rm = TRUE),
-#          probsol_2 = mean(c(coremdm016_2, coremdm017_2, coremdm018_2, coremdm019_2), na.rm = TRUE),
-#          monitoring_2 = mean(c(coremdm020_2, coremdm021_2, coremdm022_2, coremdm023_2, coremdm024_2), na.rm = TRUE),
-#          famcom_2 = mean(c(comfam001_2, comfam002_2, comfam005_2), na.rm = TRUE),
-#          emoexpres_2 = mean(c(comfam003_2, comfam004_2, comfam006_2), na.rm = TRUE),
-#          schinvolv_2 = mean(c(involveduc001_2, involveduc002_2, involveduc003_2, involveduc004_2, involveduc005_2), na.rm = TRUE),
-#          relteach_2 = mean(c(relteach001_2, relteach002_2, relteach003_2, relteach005_2, relteach006_2), na.rm = TRUE),
-#          endorse_2 = mean(c(endorschool001_2, endorschool002_2, endorschool003_2, endorschool004_2), na.rm = TRUE),
-#          parpeers_2 = mean(c(relpar001_2, relpar002_2, relpar003_2, relpar004_2, relpar005_2, relpar006_2), na.rm = TRUE))
+# data.frame(table(d_w2_clean$record_id)) # NO DUPLICATES
+```
 
+# recoding N/A
+```{r}
+d_w2_clean_2 <- recode_missing_df(d_w2_clean)
+```
+
+# Data prep: reverse scoring negatively worded items
+```{r}
+d_w2_clean_3 <- d_w2_clean_2 %>%
+  mutate(sdq007_1 = likert_reverse(sdq007_1, top = 2, bottom = 0),
+         sdq021_1 = likert_reverse(sdq021_1, top = 2, bottom = 0),
+         sdq025_1 = likert_reverse(sdq025_1, top = 2, bottom = 0),
+         sdq011_1 = likert_reverse(sdq011_1, top = 2, bottom = 0),
+         sdq014_1 = likert_reverse(sdq014_1, top = 2, bottom = 0),
+         pafas003_1 = likert_reverse(pafas003_1, top = 3, bottom = 0),
+         pafas011_1 = likert_reverse(pafas011_1, top = 3, bottom = 0),
+         pafas019_1 = likert_reverse(pafas019_1, top = 3, bottom = 0),
+         pafas020_1 = likert_reverse(pafas020_1, top = 3, bottom = 0),
+         pafas024_1 = likert_reverse(pafas024_1, top = 3, bottom = 0),
+         )
+```
+
+# renaming demo variables to serve as covariates
+```{r}
+d_w2_clean_3 <- d_w2_clean_3 %>%
+  rename(wave_2 = wave,
+         affiliation_2 = intro001_1,
+         gender_2 = demo001_1,
+         age_2 = demo002_1,
+         rel_status_2 = demo003_1,
+         ed_level_2 = demo004_1,
+         income_enough_2 = demo007_1,
+         food_insec_2 = demo008_1,
+         number_children_2 = demo015_1,
+         prim_caregiver_2 = demo021_1)
+```
+
+# scale creation
+```{r}
+w2_scales <- d_w2_clean_3 %>%
+  rowwise() %>% 
+  mutate(internalizing_2 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
+         externalizing_2 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1), na.rm = TRUE),
+         hyperactivity_2 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
+         prosocial_2 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
+         coercion_2 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
+         encouragement_2 = mean(c(pafas002_1, pafas006_1, pafas008_1), na.rm = TRUE),
+         pcpositiverel_2 = mean(c(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1), na.rm = TRUE),
+         famrels_2 = mean(c(pafas019_1, pafas020_1, pafas021_1, pafas022_1), na.rm = TRUE),
+         probsol_2 = mean(c(coremdm016_1, coremdm017_1, coremdm018_1, coremdm019_1), na.rm = TRUE),
+         monitoring_2 = mean(c(coremdm020_1, coremdm021_1, coremdm022_1, coremdm023_1, coremdm024_1), na.rm = TRUE),
+         famcom_2 = mean(c(comfam001_1, comfam002_1, comfam005_1), na.rm = TRUE),
+         emoexpres_2 = mean(c(comfam003_1, comfam004_1, comfam006_1), na.rm = TRUE),
+         schinvolv_2 = mean(c(involveduc001_1, involveduc002_1, involveduc003_1, involveduc004_1, involveduc005_1), na.rm = TRUE),
+         relteach_2 = mean(c(relteach001_1, relteach002_1, relteach003_1, relteach005_1, relteach006_1), na.rm = TRUE),
+         endorse_2 = mean(c(endorschool001_1, endorschool002_1, endorschool003_1, endorschool004_1), na.rm = TRUE),
+         parpeers_2 = mean(c(relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1), na.rm = TRUE),
+         unsafeneigh_2 = mean(c(safeneigh001_1, safeneigh002_1, safeneigh003_1, safeneigh006_1), na.rm = TRUE))
+
+# view_df(w1_scales)
 ```
 
 
---------------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------------
-
-# renaming variables (cohort 2)
 ```{r}
-
-# d1_c2 <- d_c2 %>% 
-#   rename(c("demo014_1_5" = "demo014_1_77")) %>% # to match coh_1
-#   rename(c("demo019_1_10" = "demo019_1_77")) %>% # to match coh_1
+w2_scales_final <- w2_scales %>%
+  select(record_id, condition, wave_2, affiliation_2, gender_2, age_2, rel_status_2, ed_level_2, income_enough_2, food_insec_2, number_children_2, prim_caregiver_2, internalizing_2, externalizing_2, hyperactivity_2, prosocial_2, coercion_2, encouragement_2, pcpositiverel_2, famrels_2, probsol_2, monitoring_2, famcom_2, emoexpres_2, schinvolv_2, relteach_2, endorse_2, parpeers_2, unsafeneigh_2)
 ```
+
+
+
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+
+```{r}
+w1_scales_final
+```
+
+```{r}
+w2_scales_final
+```
+
+```{r}
+test <- full_join(w1_scales_final, w2_scales_final, by = c("record_id", "condition")) %>%
+    arrange(record_id)
+```
+
+duplicated case: id 1038
+waiting to hear what to do. 
+
+After this is resolved, export dataset and create a codebook. 
+
 
 # descriptive stats function
 ```{r include=FALSE}
 
-# function that takes a df and returns a df with only the numeric columns
-only_numeric <- function(df) {
-  select_numeric <- dplyr::select_if(df, is.numeric)
-  return(select_numeric)
-}
-
-# a list with the functions we want
-smry <- list(n = function(x) length(x),
-             n_valid = function(x) sum(!is.na(x)),
-             na = function(x) sum(is.na(x)),
-             M = function(x) round(mean(x, na.rm = TRUE), 2), 
-             SD = function(x) round(sd(x, na.rm = TRUE), 2),
-             Min = function(x) round(min(x, na.rm = TRUE), 2),
-             Max = function(x) round(max(x, na.rm = TRUE), 2))
-
-# wrapping solution in a function
-descriptives <- function(df) {
-  select_numeric <- only_numeric(df)
-  mean_sd <- map_df(select_numeric, function(col) map_df(smry, ~.x(col)),
-       .id = "column")
-  return(mean_sd)
-}
+# # function that takes a df and returns a df with only the numeric columns
+# only_numeric <- function(df) {
+#   select_numeric <- dplyr::select_if(df, is.numeric)
+#   return(select_numeric)
+# }
+# 
+# # a list with the functions we want
+# smry <- list(n = function(x) length(x),
+#              n_valid = function(x) sum(!is.na(x)),
+#              na = function(x) sum(is.na(x)),
+#              M = function(x) round(mean(x, na.rm = TRUE), 2), 
+#              SD = function(x) round(sd(x, na.rm = TRUE), 2),
+#              Min = function(x) round(min(x, na.rm = TRUE), 2),
+#              Max = function(x) round(max(x, na.rm = TRUE), 2))
+# 
+# # wrapping solution in a function
+# descriptives <- function(df) {
+#   select_numeric <- only_numeric(df)
+#   mean_sd <- map_df(select_numeric, function(col) map_df(smry, ~.x(col)),
+#        .id = "column")
+#   return(mean_sd)
+# }
 ```
