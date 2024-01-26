@@ -355,46 +355,3944 @@ display: none;
 </div>
 
 
-<div id="loading-the-dataset-cohort-1---wave-1" class="section level1">
-<h1>Loading the dataset (cohort 1 - wave 1)</h1>
+<div id="wave-1" class="section level1">
+<h1>WAVE 1</h1>
+<div id="loading-the-dataset-cohort-1---wave-1" class="section level3">
+<h3>Loading the dataset (cohort 1 - wave 1)</h3>
 <pre class="r"><code>d_raw_w1 &lt;- import(here(&quot;nopublish&quot;, &quot;Cuidadores Medición 1 Cohorte 1.sav&quot;), setclass = &quot;tbl_df&quot;)</code></pre>
-<div id="wave-1" class="section level2">
-<h2>WAVE 1</h2>
-<p>#initial cleaning (wave 1)</p>
+</div>
+<div id="initial-cleaning-wave-1" class="section level3">
+<h3>initial cleaning (wave 1)</h3>
 <pre class="r"><code>d_w1 &lt;- d_raw_w1 %&gt;% 
   select(-4:-6) %&gt;% # selecting out columns with non-relevant data
   clean_names() %&gt;% # function that formats variables&#39; names
   arrange(record_id) # ordering participants ids in descending order
 
 # d_raw_w1 &lt;- d_raw_c1[-c(1:5), ] # to remove rows of data</code></pre>
+<p>1038 2 1 3 abuela (row 280)</p>
+<p>1038 2 1 1 (row 281)</p>
 </div>
-</div>
-<div id="checking-duplicated-ids" class="section level1">
-<h1>Checking duplicated ids</h1>
+<div id="checking-duplicated-ids" class="section level3">
+<h3>Checking duplicated ids</h3>
 <pre class="r"><code># data.frame(table(d_w1$record_id)) # 1 duplicate id 1038</code></pre>
 <p>Duplicate ids: 1038 (confirmed in redcap: one caregiver completed
 survey for two children, boy (grandchild) and girl(daughter)) in wave 2
 participant only completed survey for 1 child (the boy)</p>
+<pre class="r"><code># these code needs to be run in order: top to bottom
+
+only_1038 &lt;- d_w1 %&gt;%
+  filter(record_id == 1038)
+
+only_1038b &lt;- only_1038[-c(2), ] # to remove rows of data
+
+only_1038b &lt;- only_1038b %&gt;%
+  mutate(record_id = ifelse(record_id == 1038, &quot;1038b&quot;, record_id))
+
+d2_w1 &lt;- d_w1[-c(280), ] # 375 cases
+
+d2_w1 &lt;- d2_w1 %&gt;%
+  mutate(record_id = as.character(record_id))
+
+d3_w2 &lt;- full_join(d2_w1, only_1038b)</code></pre>
+<pre><code>## Joining with `by = join_by(record_id, condition, wave, intro001_1,
+## intro001input_a_1, intro002_1, intro003_1, intro004_1, demo001_1, demo002_1,
+## demo003_1, demo004_1, demo005_1, demo005input_a_1, demo005input_b_1,
+## demo005input_c_1, demo006_1, demo007_1, demo008_1, demo008input_a_1, demo009_1,
+## demo009input_a_1, demo010_1, demo010input_a_1, demo011_1_1, demo011_1_2,
+## demo011_1_3, demo011_1_4, demo011_1_5, demo011_1_6, demo011_1_7, demo011_1_8,
+## demo011_1_9, demo011_1_10, demo011_1_11, demo011_1_12, demo011_1_13,
+## demo011_1_14, demo011_1_15, demo011_1_16, demo011_1_99, demo012_1, demo013_1,
+## demo014_1_1, demo014_1_2, demo014_1_3, demo014_1_4, demo014_1_5, demo014_1_99,
+## demo015_1, demo016_1, demo017_1, demo018_1, demo018input_a_1, demo018input_b_1,
+## demo019_1_1, demo019_1_2, demo019_1_3, demo019_1_4, demo019_1_5, demo019_1_6,
+## demo019_1_7, demo019_1_8, demo019_1_9, demo019_1_10, demo019_1_99,
+## demo019input_a_1, demo020_1, demo021_1, demo022_1, demo023_1, demo024_1_1,
+## demo024_1_2, demo024_1_3, demo024_1_4, demo024_1_5, demo024_1_6, demo024_1_7,
+## demo024_1_99, demo024input_a_1, sdq001_1, sdq002_1, sdq003_1, sdq004_1,
+## sdq005_1, sdq006_1, sdq007_1, sdq008_1, sdq009_1, sdq010_1, sdq011_1, sdq012_1,
+## sdq013_1, sdq014_1, sdq015_1, sdq016_1, sdq017_1, sdq018_1, sdq019_1, sdq020_1,
+## sdq021_1, sdq022_1, sdq023_1, sdq024_1, sdq025_1, school001_1, school002_1,
+## school004_1, school005_1, school006_1, expect001_1, expect002_1, expect003_1,
+## pafas001_1, pafas002_1, pafas003_1, pafas004_1, pafas005_1, pafas006_1,
+## pafas007_1, pafas008_1, pafas009_1, pafas010_1, pafas011_1, pafas012_1,
+## pafas013_1, pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1,
+## pafas019_1, pafas020_1, pafas021_1, pafas022_1, pafas023_1, pafas024_1,
+## pafas025_1, coremdm014_1, coremdm015_1, coremdm016_1, coremdm017_1,
+## coremdm018_1, coremdm019_1, coremdm013_1, coremdm020_1, coremdm021_1,
+## coremdm022_1, coremdm023_1, coremdm024_1, coremdm025_1, esp008_1, esp009_1,
+## esp010_1, comfam001_1, comfam002_1, comfam003_1, comfam004_1, comfam005_1,
+## comfam006_1, comwteachl001_1, comwteach002_1, involveduc001_1, involveduc002_1,
+## involveduc003_1, involveduc004_1, involveduc005_1, relteach001_1,
+## relteach002_1, relteach003_1, relteach005_1, relteach006_1, relteach009_1,
+## endorschool001_1, endorschool002_1, endorschool003_1, endorschool004_1,
+## relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1,
+## safeneigh001_1, safeneigh002_1, safeneigh003_1, safeneigh004_1, safeneigh005_1,
+## safeneigh006_1, safeneigh007_1, safeneigh008_1, complete)`</code></pre>
 </div>
-<div id="before-recoding-na" class="section level1">
-<h1>before recoding N/A</h1>
-<pre class="r"><code># view_df(d_w1)</code></pre>
+<div id="re-checking-duplicated-id-1038" class="section level3">
+<h3>re-Checking duplicated id 1038</h3>
+<pre class="r"><code># data.frame(table(d3_w2$record_id)) # no duplicated ids</code></pre>
+</div>
+<div id="before-recoding-na" class="section level3">
+<h3>before recoding N/A</h3>
+<pre class="r"><code>view_df(d3_w2)</code></pre>
+<pre><code>## Following 1 variables have only missing values and are not shown:</code></pre>
+<pre><code>## demo019input_a_1 [67]</code></pre>
+<table style="border-collapse:collapse; border:none;">
+<caption>
+Data frame: d3_w2
+</caption>
+<tr>
+<th style="border-bottom:double; font-style:italic; font-weight:normal; padding:0.2cm; text-align:left; vertical-align:top;">
+ID
+</th>
+<th style="border-bottom:double; font-style:italic; font-weight:normal; padding:0.2cm; text-align:left; vertical-align:top;">
+Name
+</th>
+<th style="border-bottom:double; font-style:italic; font-weight:normal; padding:0.2cm; text-align:left; vertical-align:top;">
+Label
+</th>
+<th style="border-bottom:double; font-style:italic; font-weight:normal; padding:0.2cm; text-align:left; vertical-align:top;">
+Values
+</th>
+<th style="border-bottom:double; font-style:italic; font-weight:normal; padding:0.2cm; text-align:left; vertical-align:top;">
+Value Labels
+</th>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+record_id
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+&lt;output omitted&gt;
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+2
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+condition
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Condición en la que participa la escuela
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Implementación<br>Control
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+3
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+wave
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Medición
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>3
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>3
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+4
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+intro001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol style="list-style-type: decimal">
+<li>¿Cuál es su relación con su niña o niño?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+&lt;output omitted&gt;
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+5
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+intro001input_a_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1a. Si mbackground-color:#eeeeeeó “otra relación,” por
+favor<br>especifique
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+6
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+intro002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="2" style="list-style-type: decimal">
+<li>Su niña o niño se identifica con el género:
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Femenino<br>Masculino<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+7
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+intro003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="3" style="list-style-type: decimal">
+<li>Edad de su niña o niño (en años):
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;" colspan="2">
+<em>range: 8-12</em>
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+8
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+intro004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="4" style="list-style-type: decimal">
+<li>¿En qué grado está su niña o niño en este<br>momento?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee" colspan="2">
+<em>range: 3-6</em>
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+9
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol style="list-style-type: decimal">
+<li>¿Cuál es su género?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Femenino<br>Masculino<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+10
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="2" style="list-style-type: decimal">
+<li>¿Cuántos años tiene?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee" colspan="2">
+<em>range: 9-70</em>
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+11
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="3" style="list-style-type: decimal">
+<li>¿Cuál es su estado civil?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>3<br>4<br>5<br>6<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Soltera/o<br>Unión
+libre<br>Casada/o<br>Separada/o<br>Divorciada/o<br>Viuda/o<br>Prefiero
+no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+12
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="4" style="list-style-type: decimal">
+<li>¿Cuál es el nivel más alto de la escuela a la<br>que asistió?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca asistí a la escuela<br>Asistí a la escuela primaria pero no la
+terminé<br>Terminé la escuela primaria<br>Asistí a la escuela secundaria
+pero no la terminé<br>Terminé la escuela secundaria<br>Asistí al
+bachillerato o diversificado pero no lo terminé<br>Terminé el
+bachillerato o diversificado<br>Asistí a la universidad pero no la
+terminé<br>Terminé la educación universitaria<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+13
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo005_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="5" style="list-style-type: decimal">
+<li>¿Tiene actualmente un trabajo u oficio por el<br>cual recibe
+dinero/le pagan?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No<br>Sí<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+14
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo005input_a_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+5a. Si mbackground-color:#eeeeeeó “Sí,” ¿En qué trabaja?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+15
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo005input_b_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+5b. Si mbackground-color:#eeeeeeó “Sí,” ¿Cuantas horas a la
+semana<br>trabaja más o menos?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;" colspan="2">
+<em>range: 1.0-90.0</em>
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+16
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo005input_c_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+5c. Si mbackground-color:#eeeeeeó “Sí,” Usted trabaja…
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Desde casa<br>Fuera de casa<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+17
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo006_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="6" style="list-style-type: decimal">
+<li>¿Cuántas personas en su casa aportan dinero<br>para el sostenimiento
+del hogar?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;" colspan="2">
+<em>range: 0-11</em>
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+18
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo007_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="7" style="list-style-type: decimal">
+<li>Este ingreso es….
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Lo suficiente para nuestra familia/hogar y podemos ahorrar de ello<br>Lo
+justo para nuestra familia/hogar, para que no tengamos mayores
+dificultades financieras<br>No es suficiente para nuestra familia/hogar
+y estamos estirados<br>No es suficiente para nuestra familia/hogar y lo
+estamos pasando mal<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+19
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo008_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="8" style="list-style-type: decimal">
+<li>En los últimos 30 días, ¿alguna vez no hubo<br>alimentos en su hogar
+debido a la falta de<br>recursos?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No<br>Sí<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+20
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo008input_a_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+8a. ¿Con qué frecuencia sucedió esto en los<br>últimos 30 días?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Rara vez (1 a 3 veces)<br>A veces (4 a 10 veces)<br>Frecuentemente (más
+de 10 veces)<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+21
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo009_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="9" style="list-style-type: decimal">
+<li>Su vivienda es:
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>3<br>4<br>5<br>6<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Propia<br>Alquilada<br>Prestada<br>Hipotecada<br>Compartida<br>Otro<br>Prefiero
+no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+22
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo009input_a_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+9a. Si mbackground-color:#eeeeeeó “otro,” por favor especifique
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+23
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo010_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="10" style="list-style-type: decimal">
+<li>Tipo de vivienda:
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Apartamento<br>Casa<br>Cuarto<br>Otro<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+24
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo010input_a_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+10.a
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+25
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo011_1_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Electricidad
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+26
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo011_1_2
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Agua de la llave
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+27
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo011_1_3
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Agua potable
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+28
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo011_1_4
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Gas
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+29
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo011_1_5
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Servicio/retrete privado
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+30
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo011_1_6
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Estufa
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+31
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo011_1_7
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Refrigerador
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+32
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo011_1_8
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Lavadora
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+33
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo011_1_9
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Televisión
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+34
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo011_1_10
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Smartphone/Teléfono inteligente
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+35
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo011_1_11
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Datos para celular
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+36
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo011_1_12
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Computadora de escritorio/computadora portátil
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+37
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo011_1_13
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Tablet
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+38
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo011_1_14
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Internet en casa (WiFi)
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+39
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo011_1_15
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Motocicleta
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+40
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo011_1_16
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Carro
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+41
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo011_1_99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Acceso a servicios y bienes (Marque todo lo<br>que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+42
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo012_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="12" style="list-style-type: decimal">
+<li>¿Cuánto tiempo se tarda en ir de su casa a su<br>lugar de trabajo?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>5<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No tengo trabajo<br>Trabajo desde casa<br>Entre 5 minutos a 30
+minutos<br>Entre 31 minutos a 1 hora<br>Entre 1 a 1,5 horas<br>Entre 1,5
+a 2 horas<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+43
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo013_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="13" style="list-style-type: decimal">
+<li>¿Cuánto tiempo se tarda en ir de su casa a la<br>escuela de su niña
+o niño?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Entre 5 minutos a 30 minutos<br>Entre 31 minutos a 59 minutos<br>Entre 1
+a 1,5 horas<br>Entre 1,5 a 2 horas<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+44
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo014_1_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="14" style="list-style-type: decimal">
+<li>¿Qué medio de transporte suele utilizar para<br>llegar a la escuela
+de su niña o niño? (Marque<br>todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Caminando
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+45
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo014_1_2
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="14" style="list-style-type: decimal">
+<li>¿Qué medio de transporte suele utilizar para<br>llegar a la escuela
+de su niña o niño? (Marque<br>todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Transporte público
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+46
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo014_1_3
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="14" style="list-style-type: decimal">
+<li>¿Qué medio de transporte suele utilizar para<br>llegar a la escuela
+de su niña o niño? (Marque<br>todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Carro propio
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+47
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo014_1_4
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="14" style="list-style-type: decimal">
+<li>¿Qué medio de transporte suele utilizar para<br>llegar a la escuela
+de su niña o niño? (Marque<br>todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Comparto transporte con otras personas
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+48
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo014_1_5
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="14" style="list-style-type: decimal">
+<li>¿Qué medio de transporte suele utilizar para<br>llegar a la escuela
+de su niña o niño? (Marque<br>todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Otro
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+49
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo014_1_99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="14" style="list-style-type: decimal">
+<li>¿Qué medio de transporte suele utilizar para<br>llegar a la escuela
+de su niña o niño? (Marque<br>todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+&lt;output omitted&gt;
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+50
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo015_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="15" style="list-style-type: decimal">
+<li>¿Cuántos hijos tiene?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee" colspan="2">
+<em>range: 0-14</em>
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+51
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo016_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="16" style="list-style-type: decimal">
+<li>¿Cuántos niños (menores de 18 años) viven<br>actualmente en su
+hogar?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;" colspan="2">
+<em>range: 0-10</em>
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+52
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo017_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="17" style="list-style-type: decimal">
+<li>¿Cuántos adultos (mayores de 18 años) viven<br>actualmente en su
+hogar, incluyéndose a usted<br>mismo?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee" colspan="2">
+<em>range: 0-9</em>
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+53
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo018_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="18" style="list-style-type: decimal">
+<li>¿Alguna persona que solía ser cuidadora<br>(padre, madre, u otro) de
+su niña o niño en este<br>estudio ahora vive en el extranjero?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No<br>Sí<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+54
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo018input_a_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+18a. ¿En qué país viven?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+55
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo018input_b_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+18b. ¿Esa persona u otros familiares cercanos que<br>viven en el
+extranjero contribuyen a los ingresos<br>de su hogar?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No<br>Sí<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+56
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo019_1_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Madre
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+57
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo019_1_2
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Madrastra
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+58
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo019_1_3
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Padre
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+59
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo019_1_4
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Padrastro
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+60
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo019_1_5
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Abuela/Abuelo
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+61
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo019_1_6
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Tía/Tío
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+62
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo019_1_7
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Hermanos/hermanastros adultos
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+63
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo019_1_8
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Primos u otros familiares
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+64
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo019_1_9
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Amigo de la familia
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+65
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo019_1_10
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Otro
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+66
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo019_1_99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="19" style="list-style-type: decimal">
+<li>Piense en los adultos que actualmente viven en<br>su hogar,
+incluyéndose a usted mismo. Seleccione<br>qué relación tiene cada uno de
+estos adultos con<br>su niña o niño (Marque todo lo que corresponda)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+68
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo020_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="20" style="list-style-type: decimal">
+<li>¿Alguno de estos adultos ayuda a cuidar a su<br>niña o niño?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No<br>Sí<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+69
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo021_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="21" style="list-style-type: decimal">
+<li>¿Es usted el cuidador principal de su niña o<br>niño? (Es decir,
+quién pasa la mayor parte de su<br>tiempo cuidando, alimentando,
+comunicándose con la<br>escuela, conversando y jugando con su niña
+o<br>niño).
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No<br>Sí<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+70
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo022_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="22" style="list-style-type: decimal">
+<li>¿El otro padre o madre biológico de su niña o<br>niño vive en el
+mismo hogar que usted?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No<br>Sí<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+71
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo023_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="23" style="list-style-type: decimal">
+<li>En un día laboral típico, ¿cuánto tiempo pasa<br>con su niña o niño?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Menos de 1 hora al día<br>Entre 1 - 2 horas al día<br>Entre 3 - 5 horas
+al día<br>Más de 5 horas al día<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+72
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo024_1_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="24" style="list-style-type: decimal">
+<li>¿Cómo suelen pasar este tiempo juntos? (Marque<br>todo lo que
+aplique)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Cuidados básicos (alimentación, baño, etc.)
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+73
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo024_1_2
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="24" style="list-style-type: decimal">
+<li>¿Cómo suelen pasar este tiempo juntos? (Marque<br>todo lo que
+aplique)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Haciendo tareas escolares
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+74
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo024_1_3
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="24" style="list-style-type: decimal">
+<li>¿Cómo suelen pasar este tiempo juntos? (Marque<br>todo lo que
+aplique)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Labores del hogar/cocinando
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+75
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo024_1_4
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="24" style="list-style-type: decimal">
+<li>¿Cómo suelen pasar este tiempo juntos? (Marque<br>todo lo que
+aplique)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Jugando, cantando canciones
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+76
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo024_1_5
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="24" style="list-style-type: decimal">
+<li>¿Cómo suelen pasar este tiempo juntos? (Marque<br>todo lo que
+aplique)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Leyendo juntos
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+77
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo024_1_6
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="24" style="list-style-type: decimal">
+<li>¿Cómo suelen pasar este tiempo juntos? (Marque<br>todo lo que
+aplique)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Viendo la televisión
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+78
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo024_1_7
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="24" style="list-style-type: decimal">
+<li>¿Cómo suelen pasar este tiempo juntos? (Marque<br>todo lo que
+aplique)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Otro
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+79
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+demo024_1_99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="24" style="list-style-type: decimal">
+<li>¿Cómo suelen pasar este tiempo juntos? (Marque<br>todo lo que
+aplique)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+80
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+demo024input_a_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+24a. Si mbackground-color:#eeeeeeó “otro,” por favor especifique
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+81
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol style="list-style-type: decimal">
+<li>Tiene en cuenta los sentimientos de otras<br>personas.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+82
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="2" style="list-style-type: decimal">
+<li>Es inquieto/a, hiperactivo/a, no puede<br>permanecer quieto/a por
+mucho tiempo.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+83
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="3" style="list-style-type: decimal">
+<li>Se queja con frecuencia de dolor de cabeza, de<br>estómago o de
+náuseas.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+84
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="4" style="list-style-type: decimal">
+<li>Comparte frecuentemente con otros niños/as<br>chucherías, juguetes,
+lápices, etc.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+85
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq005_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="5" style="list-style-type: decimal">
+<li>Frecuentemente tiene rabietas o mal genio.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+86
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq006_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="6" style="list-style-type: decimal">
+<li>Es más bien solitario/a y tiende a jugar<br>solo/a.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+87
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq007_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="7" style="list-style-type: decimal">
+<li>Por lo general es obediente, suele hacer lo que<br>le piden los
+adultos.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+88
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq008_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="8" style="list-style-type: decimal">
+<li>Tiene muchas preocupaciones, a menudo parece<br>inquieto/a o
+preocupado.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+89
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq009_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="9" style="list-style-type: decimal">
+<li>Ofrece ayuda cuando alguien está herido,<br>disgustado o enfermo.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+90
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq010_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="10" style="list-style-type: decimal">
+<li>Está continuamente moviéndose y es revoltoso
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+91
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq011_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Tiene por lo menos un/a buen/a amigo/a
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+92
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq012_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="12" style="list-style-type: decimal">
+<li>Pelea con frecuencia con otros niños/as o se<br>mete con
+ellos/ellas.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+93
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq013_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="13" style="list-style-type: decimal">
+<li>Se siente a menudo infeliz, desanimado o<br>lloroso
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+94
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq014_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="14" style="list-style-type: decimal">
+<li>Por lo general le cae bien a los otros<br>niños/as
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+95
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq015_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="15" style="list-style-type: decimal">
+<li>Se distrae con facilidad, su concentración<br>tiende a dispersarse
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+96
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq016_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="16" style="list-style-type: decimal">
+<li>Es nervioso/a o dependiente ante nuevas<br>situaciones, fácilmente
+pierde la confianza en sí<br>mismo/a
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+97
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq017_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="17" style="list-style-type: decimal">
+<li>Trata bien a los niños/as más pequeños/as.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+98
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq018_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="18" style="list-style-type: decimal">
+<li>A menudo miente o engaña.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq019_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="19" style="list-style-type: decimal">
+<li>Los otros niños se meten con él/ella o se<br>burlan de él/ella.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+100
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq020_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="20" style="list-style-type: decimal">
+<li>A menudo se ofrece para ayudar (a madres,<br>padres, docentes, otros
+niños/as).
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+101
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq021_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="21" style="list-style-type: decimal">
+<li>Piensa las cosas antes de hacerlas
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+102
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq022_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="22" style="list-style-type: decimal">
+<li>Roba cosas en casa, en la escuela o en otros<br>sitios.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+103
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq023_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="23" style="list-style-type: decimal">
+<li>Se lleva mejor con adultos que con otros<br>niños/as.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+104
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+sdq024_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="24" style="list-style-type: decimal">
+<li>Tiene muchos miedos, se asusta fácilmente.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+105
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+sdq025_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="25" style="list-style-type: decimal">
+<li>Termina lo que empieza, tiene buena<br>concentración.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No es cierto<br>Algo cierto<br>Totalmente cierto<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+106
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+school001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol style="list-style-type: decimal">
+<li>¿Qué tanto le gusta a su niña o niño la<br>escuela?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No le gusta la escuela para nada<br>No le gusta casi la escuela<br>Le
+parece más o menos<br>Le gusta un poco escuela<br>Le gusta mucho la
+escuela<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+107
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+school002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="2" style="list-style-type: decimal">
+<li>¿Con qué frecuencia asiste su niña o niño a la<br>escuela (sea en
+persona o virtual)?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Mi niña o niño no asiste a la escuela<br>Unos cuantos días al
+mes<br>Unos cuantos días a la semana<br>La mayoría de los días en la
+semana<br>Todos los días<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+108
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+school004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="4" style="list-style-type: decimal">
+<li>¿Con qué frecuencia su niña o niño completa su<br>tarea a tiempo?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nunca<br>Rara vez<br>A veces<br>Por lo general<br>Siempre<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+109
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+school005_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="5" style="list-style-type: decimal">
+<li>¿Con qué frecuencia ayuda a su niña o niño con<br>su tarea?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Rara vez<br>A veces<br>Por lo general<br>Siempre<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+110
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+school006_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="6" style="list-style-type: decimal">
+<li>¿Cómo le va a su niña o niño en las clases de<br>la escuela?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>5<br>6<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Muy mal<br>Mal<br>Mas o menos<br>Bien<br>Muy bien<br>Excelente<br>No
+estoy segura/seguro<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+111
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+expect001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol style="list-style-type: decimal">
+<li>Me preocupa que mi niña o niño esté en un<br>camino que podría
+conducir a problemas graves en<br>la vida.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+112
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+expect002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="2" style="list-style-type: decimal">
+<li>Creo que mi niña o niño está en un buen camino<br>que lo llevará al
+éxito en la vida.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+113
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+expect003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="3" style="list-style-type: decimal">
+<li>Tengo esperanzas sobre el futuro de mi niña o<br>niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+114
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol style="list-style-type: decimal">
+<li>Me rindo y realizo las tareas de la casa yo<br>misma/o si mi niña o
+niño no hace lo que le pido.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+115
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="2" style="list-style-type: decimal">
+<li>Recompenso a mi niña o niño con un premio o<br>actividad divertida
+por haberse portado bien.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+116
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="3" style="list-style-type: decimal">
+<li>Yo cumplo con la consecuencia programada (p.<br>ej. quitarle un
+juguete) cuando mi niña o niño se<br>porta mal.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+117
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="4" style="list-style-type: decimal">
+<li>Amenazo a mi niña o niño con algo (p. ej.<br>apagar la TV) por su
+mal comportamiento, pero<br>después no cumplo con la amenaza.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+118
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas005_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="5" style="list-style-type: decimal">
+<li>Grito o me enojo con mi niña o niño cuando<br>él/ella se porta mal.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+119
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas006_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="6" style="list-style-type: decimal">
+<li>Le doy un cumplido a mi niña o niño cuando se<br>porta bien.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+120
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas007_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="7" style="list-style-type: decimal">
+<li>Hago sentir mal o culpable a mi niña o niño a<br>propósito por
+portarse mal para darle una lección.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+121
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas008_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="8" style="list-style-type: decimal">
+<li>Le doy atención a mi niña o niño con un abrazo,<br>un guiño de ojo,
+sonrisa o beso cuando él/ella se<br>porta bien.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+122
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas009_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="9" style="list-style-type: decimal">
+<li>Le doy unas nalgadas a mi niña o niño cuando se<br>porta mal.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+123
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas010_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="10" style="list-style-type: decimal">
+<li>Discuto con mi niña o niño sobre su mal<br>comportamiento o actitud.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+124
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas011_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="11" style="list-style-type: decimal">
+<li>Respondo de forma consistente (de la misma<br>manera) cuando trato
+con el mal comportamiento de<br>mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+125
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas012_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="12" style="list-style-type: decimal">
+<li>Cedo ante las demandas de mi niña o niño<br>cuando él/ella se
+disgusta o altera.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+126
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas013_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="13" style="list-style-type: decimal">
+<li>Me enojo con mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+127
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas014_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="14" style="list-style-type: decimal">
+<li>Converso con mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+128
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas015_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="15" style="list-style-type: decimal">
+<li>Disfruto abrazar, besar y arrullar a mi niña o<br>niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+129
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas016_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="16" style="list-style-type: decimal">
+<li>Estoy orgullosa/orgulloso de mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+130
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas017_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="17" style="list-style-type: decimal">
+<li>Disfruto pasar tiempo con mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+131
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas018_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="18" style="list-style-type: decimal">
+<li>Tengo una buena relación con mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+132
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas019_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="19" style="list-style-type: decimal">
+<li>Los miembros de nuestra familia se ayudan y<br>apoyan mutuamente.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+133
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas020_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="20" style="list-style-type: decimal">
+<li>Los miembros de nuestra familia se llevan bien<br>entre sí.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+134
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas021_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="21" style="list-style-type: decimal">
+<li>Los miembros de nuestra familia pelean o<br>discuten.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+135
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas022_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="22" style="list-style-type: decimal">
+<li>Los miembros de nuestra familia se critican<br>entre sí
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+136
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas023_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="23" style="list-style-type: decimal">
+<li>Trabajo en equipo con mi pareja en la crianza<br>de mi niña o niño
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+137
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+pafas024_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="24" style="list-style-type: decimal">
+<li>No estoy de acuerdo con mi pareja sobre la<br>crianza de mi niña o
+niño
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+138
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+pafas025_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="25" style="list-style-type: decimal">
+<li>Tengo una buena relación con mi pareja
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+139
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+coremdm014_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="14" style="list-style-type: decimal">
+<li>Cuando mi niña o niño se siente realmente<br>molesto, le sugiero
+formas de calmarse (por<br>ejemplo, respirar profundamente, tomar agua,
+etc.)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+140
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+coremdm015_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="15" style="list-style-type: decimal">
+<li>Cuando mi niña o niño tiene un problema,<br>nombro sus emociones
+para ayudarle a reconocer<br>cómo se siente (por ejemplo, puedo ver que
+te<br>sentís enojado…).
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+141
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+coremdm016_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="16" style="list-style-type: decimal">
+<li>Cuando siento emociones fuertes debido a un<br>problema con mi niña
+o niño, sigo unos pasos que<br>me ayudan a calmarme.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+142
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+coremdm017_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="17" style="list-style-type: decimal">
+<li>Cuando tengo un problema con mi niña o niño,<br>me siento capaz de
+encontrar una solución.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+143
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+coremdm018_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="18" style="list-style-type: decimal">
+<li>Cuando tengo un problema con mi niña o niño,<br>pienso en varias
+formas de resolverlo.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+144
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+coremdm019_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="19" style="list-style-type: decimal">
+<li>Cuando tengo un problema con mi niña o niño,<br>sigo unos pasos que
+me ayudan a solucionar el<br>problema.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+145
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+coremdm013_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="13" style="list-style-type: decimal">
+<li>Le doy más atención a los comportamientos de<br>mi niña o niño que
+me agradan que a sus pequeñas<br>faltas.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+146
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+coremdm020_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="20" style="list-style-type: decimal">
+<li>Redirijo el comportamiento de mi niña o niño<br>con una palabra o
+gesto para recordarle cómo debe<br>comportarse antes de que caiga en un
+mal<br>comportamiento.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+147
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+coremdm021_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="21" style="list-style-type: decimal">
+<li>Me aseguro de que mi niña o niño sepa que me<br>fijo en ella o él,
+por ejemplo, haciéndole un<br>gesto de saludo (“chócala”, puñito,
+guiño),<br>sonriéndole, abrazándole o dándole un besito.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+148
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+coremdm022_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="22" style="list-style-type: decimal">
+<li>Durante una semana típica, ¿con qué frecuencia<br>sabe dónde está su
+niña o niño?
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nunca<br>Casi nunca<br>A veces<br>Frecuentemente<br>Muy
+frecuentemente<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+149
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+coremdm023_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="23" style="list-style-type: decimal">
+<li>Conozco a los niños con los que mi niña o niño<br>pasa la mayor
+parte de su tiempo.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Más o menos cierto<br>Bastante
+cierto<br>Completamente cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+150
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+coremdm024_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="24" style="list-style-type: decimal">
+<li>Conozco a los padres de los niños con los que<br>mi niña o niño pasa
+la mayor parte de su tiempo.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Más o menos cierto<br>Bastante
+cierto<br>Completamente cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+151
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+coremdm025_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="25" style="list-style-type: decimal">
+<li>Me preocupa el tipo de amistades con el que mi<br>niña o niño está
+pasando su tiempo.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Más o menos cierto<br>Bastante
+cierto<br>Completamente cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+152
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+esp008_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="8" style="list-style-type: decimal">
+<li>La mejor manera de manejar problemas es evitar<br>hablar de ellos.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Totalmente en desacuerdo<br>En desacuerdo<br>Ni de acuerdo ni en
+desacuerdo<br>De acuerdo<br>Totalmente de acuerdo<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+153
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+esp009_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="9" style="list-style-type: decimal">
+<li>En mi casa cuando hay problemas entre mi niña o<br>niño y yo (madre,
+padre o tutor), nos peleamos,<br>discutimos, y a fin de cuentas no se
+resuelve<br>nada.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Totalmente en desacuerdo<br>En desacuerdo<br>Ni de acuerdo ni en
+desacuerdo<br>De acuerdo<br>Totalmente de acuerdo<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+154
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+esp010_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="10" style="list-style-type: decimal">
+<li>Cuando tengo una discusión con mi niña o niño,<br>es difícil para mí
+mantener la calma.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Totalmente en desacuerdo<br>En desacuerdo<br>Ni de acuerdo ni en
+desacuerdo<br>De acuerdo<br>Totalmente de acuerdo<br>Prefiero no
+responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+155
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+comfam001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol style="list-style-type: decimal">
+<li>Los miembros de mi familia estamos satisfechos<br>con la forma de
+comunicarnos.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>3<br>4<br>5<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No describe nada a mi familia<br>Sólo describe a mi familia un
+poco<br>Describe a veces a mi familia<br>En general, sí describe a mi
+familia<br>Describe muy bien a mi familia<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+156
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+comfam002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="2" style="list-style-type: decimal">
+<li>Los miembros de mi familia sabemos escuchar.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>3<br>4<br>5<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No describe nada a mi familia<br>Sólo describe a mi familia un
+poco<br>Describe a veces a mi familia<br>En general, sí describe a mi
+familia<br>Describe muy bien a mi familia<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+157
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+comfam003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="3" style="list-style-type: decimal">
+<li>Los miembros de mi familia nos expresamos<br>afecto entre nosotros.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>3<br>4<br>5<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No describe nada a mi familia<br>Sólo describe a mi familia un
+poco<br>Describe a veces a mi familia<br>En general, sí describe a mi
+familia<br>Describe muy bien a mi familia<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+158
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+comfam004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="4" style="list-style-type: decimal">
+<li>En nuestra familia compartimos los sentimientos<br>abiertamente.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>3<br>4<br>5<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No describe nada a mi familia<br>Sólo describe a mi familia un
+poco<br>Describe a veces a mi familia<br>En general, sí describe a mi
+familia<br>Describe muy bien a mi familia<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+159
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+comfam005_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="5" style="list-style-type: decimal">
+<li>Los miembros de mi familia resolvemos<br>tranquilamente los
+problemas.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+1<br>2<br>3<br>4<br>5<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+No describe nada a mi familia<br>Sólo describe a mi familia un
+poco<br>Describe a veces a mi familia<br>En general, sí describe a mi
+familia<br>Describe muy bien a mi familia<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+160
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+comfam006_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="6" style="list-style-type: decimal">
+<li>En nuestra familia expresamos nuestros<br>verdaderos sentimientos.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2<br>3<br>4<br>5<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+No describe nada a mi familia<br>Sólo describe a mi familia un
+poco<br>Describe a veces a mi familia<br>En general, sí describe a mi
+familia<br>Describe muy bien a mi familia<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+161
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+comwteachl001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol style="list-style-type: decimal">
+<li>Comparto con el profesor o profesora de mi niña<br>o niño (llamando,
+enviando mensajes o visitando)<br>cosas importantes que suceden en casa
+con ella/él<br>para mantenerlo informado sobre cómo está mi niña<br>o
+niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Una vez al año<br>Varias veces al año<br>Varias veces al
+mes<br>Varias veces a la semana<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+162
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+comwteach002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="2" style="list-style-type: decimal">
+<li>El profesor o profesora de mi niña o niño<br>comparte conmigo
+(llamando, enviando mensajes o<br>visitando) cosas importantes que
+suceden en la<br>escuela con ella/él para mantenerme informado<br>sobre
+cómo le está yendo a mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nunca<br>Una vez al año<br>Varias veces al año<br>Varias veces al
+mes<br>Varias veces a la semana<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+163
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+involveduc001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="3" style="list-style-type: decimal">
+<li>Asisto a las reuniones de entrega de notas (ya<br>sea virtual o en
+persona) de mi niña o niño cuando<br>su profesor o profesora me convoca
+o cuando están<br>programadas.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Casi nunca<br>A veces<br>Casi siempre<br>Siempre<br>No
+aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+164
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+involveduc002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="4" style="list-style-type: decimal">
+<li>Asisto a la escuela de mi niña o niño para<br>eventos especiales
+(por ejemplo, una feria de<br>lectura, una feria de arte, etc.) cuando
+me<br>invitan.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nunca<br>Casi nunca<br>A veces<br>Casi siempre<br>Siempre<br>No
+aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+165
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+involveduc003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="5" style="list-style-type: decimal">
+<li>Asisto a las reuniones de la asociación de<br>padres (ya sea virtual
+o en persona) cuando están<br>programadas.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Casi nunca<br>A veces<br>Casi siempre<br>Siempre<br>No
+aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+166
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+involveduc004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="6" style="list-style-type: decimal">
+<li>Hago voluntariado en la escuela de mi niña o<br>niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nunca<br>Casi nunca<br>A veces<br>Casi siempre<br>Siempre<br>No
+aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+167
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+involveduc005_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="8" style="list-style-type: decimal">
+<li>Hago cosas para fomentar la actitud positiva de<br>mi niña o niño
+hacia la educación (por ejemplo,<br>leemos juntos, busco materiales y
+juegos<br>educativos, etc.)
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nunca<br>Casi nunca<br>A veces<br>Casi siempre<br>Siempre<br>No
+aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+168
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+relteach001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="10" style="list-style-type: decimal">
+<li>Me siento bienvenido en la escuela de mi niña<br>o niño
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+169
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+relteach002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="11" style="list-style-type: decimal">
+<li>Me gusta hablar con el profesor o profesora de<br>mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+170
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+relteach003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="12" style="list-style-type: decimal">
+<li>Siento que el profesor o profesora de mi niña<br>o niño se preocupa
+por él/ella
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+171
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+relteach005_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="14" style="list-style-type: decimal">
+<li>Me siento cómodo hablando con el profesor o<br>profesora de mi niña
+o niño sobre mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+172
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+relteach006_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="15" style="list-style-type: decimal">
+<li>Siento que el profesor o profesora de mi niña<br>o niño presta
+atención a mis sugerencias.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+173
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+relteach009_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="18" style="list-style-type: decimal">
+<li>El profesor o profesora de mi niña o niño y yo<br>tenemos diferentes
+formas de ver a mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+174
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+endorschool001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="19" style="list-style-type: decimal">
+<li>La escuela de mi niña o niño es un buen lugar<br>para ella/él.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+175
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+endorschool002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="20" style="list-style-type: decimal">
+<li>El personal de la escuela de mi niña o niño<br>está haciendo cosas
+buenas por ella/él.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+176
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+endorschool003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="21" style="list-style-type: decimal">
+<li>Tengo confianza en la gente de la escuela de<br>mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+177
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+endorschool004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="22" style="list-style-type: decimal">
+<li>La escuela de mi niña o niño está haciendo un<br>buen trabajo al
+preparar a los niños para su<br>futuro.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>4<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Totalmente en desacuerdo<br>En desacuerdo<br>No estoy seguro<br>De
+acuerdo<br>Totalmente de acuerdo<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+178
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+relpar001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="23" style="list-style-type: decimal">
+<li>Conozco a la mayoría de los padres en el aula<br>de mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+179
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+relpar002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="24" style="list-style-type: decimal">
+<li>Me llevo bien con otros padres en el aula de<br>mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+180
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+relpar003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="25" style="list-style-type: decimal">
+<li>Me comunico a menudo con otros padres en el<br>aula de mi niña o
+niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+181
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+relpar004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="26" style="list-style-type: decimal">
+<li>Soy buen amigo de al menos otro padre en el<br>aula de mi niña o
+niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+182
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+relpar005_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="27" style="list-style-type: decimal">
+<li>Si necesito consejo y/o ayuda, me siento<br>cómodo preguntando a uno
+de los padres en el aula<br>de mi niña o niño.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+183
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+relpar006_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="28" style="list-style-type: decimal">
+<li>Ayudaría a uno de los padres en el aula de mi<br>niña o niño si me
+lo pidiera.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>77<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>No aplica<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+184
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+safeneigh001_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol style="list-style-type: decimal">
+<li>Es común ver a niños sin supervisión en mi<br>vecindario.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+185
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+safeneigh002_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="2" style="list-style-type: decimal">
+<li>Es común el graffiti (placazo) en mi vecindario
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+186
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+safeneigh003_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="3" style="list-style-type: decimal">
+<li>Es común ver a los niños faltando a la escuela<br>y pasando el rato
+en una esquina de mi vecindario
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+187
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+safeneigh004_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="4" style="list-style-type: decimal">
+<li>Mi niña o niño puede jugar con seguridad<br>afuera.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+188
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+safeneigh005_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="5" style="list-style-type: decimal">
+<li>Es seguro para mi niña o niño caminar a la<br>escuela.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+189
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+safeneigh006_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="6" style="list-style-type: decimal">
+<li>Me preocupa la seguridad de mi familia en<br>nuestro vecindario.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+190
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+safeneigh007_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+<ol start="7" style="list-style-type: decimal">
+<li>La escuela de mi niña o niño es un lugar seguro<br>para él/ella
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+191
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+safeneigh008_1
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+<ol start="8" style="list-style-type: decimal">
+<li>Estoy seguro de que puedo hacer lo necesario<br>para mantener a mi
+niña o niño seguro en la<br>comunidad.
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+0<br>1<br>2<br>3<br>99
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top; background-color:#eeeeee">
+Nada cierto<br>Un poco cierto<br>Bastante cierto<br>Completamente
+cierto<br>Prefiero no responder
+</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+192
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+complete
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+1<br>2
+</td>
+<td style="padding:0.2cm; text-align:left; vertical-align:top;">
+&lt;output omitted&gt;
+</td>
+</tr></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol>
+</table>
 <p>I identified the following variables to convert to N/A: 77 = No
 aplica 98 = no estoy sugura 99 = prefer not to respond</p>
 </div>
-<div id="recoding-missing-variables-as-na" class="section level1">
-<h1>recoding missing variables as N/A</h1>
+<div id="recoding-missing-variables-as-na" class="section level3">
+<h3>recoding missing variables as N/A</h3>
 </div>
-<div id="after-recoding-na" class="section level1">
-<h1>after recoding N/A</h1>
+<div id="after-recoding-na" class="section level3">
+<h3>after recoding N/A</h3>
 <pre class="r"><code># view_df(d_w1_clean)</code></pre>
+</div>
 <div id="scales" class="section level2">
 <h2>SCALES</h2>
 <p>_1 = wave 1 * = need reverse scoring</p>
-</div>
-</div>
-<div id="sdq" class="section level1">
-<h1>SDQ</h1>
+<div id="sdq" class="section level3">
+<h3>SDQ</h3>
 <p>internalizing_1 = sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1
 externalizing_1 = sdq005_1, sdq007_1<em>, sdq012_1, sdq018_1, sdq022_1
 hyperactivity_1 = sdq002_1, sdq010_1, sdq015_1, sdq021_1</em> ,
@@ -402,8 +4300,8 @@ sdq025_1<em> socialization_1 = sdq006_1, sdq011_1</em> , sdq014_1* ,
 sdq019_1, sdq023_1 prosocial_1 = sdq001_1, sdq004_1, sdq009_1, sdq017_1,
 sdq020_1</p>
 </div>
-<div id="pafas" class="section level1">
-<h1>PAFAS</h1>
+<div id="pafas" class="section level3">
+<h3>PAFAS</h3>
 <p>(higher scores - lower construct) consistency_1 = pafas001_1,
 pafas003_1* , pafas004_1, pafas011_1<em>, pafas012_1 (higher scores -
 higher construct) coercion_1 = pafas005_1, pafas007_1, pafas009_1,
@@ -414,8 +4312,8 @@ pafas017_1, pafas018_1 (higher scores - lower construct) famrels_1 =
 pafas019_1</em> , pafas020_1* , pafas021_1, pafas022_1 (higher scores -
 higher construct) teamwork_1 = pafas023_1 , pafas024_1* , pafas025_1</p>
 </div>
-<div id="data-prep-reverse-scoring-negatively-worded-items" class="section level1">
-<h1>Data prep: reverse scoring negatively worded items</h1>
+<div id="data-prep-reverse-scoring-negatively-worded-items" class="section level3">
+<h3>Data prep: reverse scoring negatively worded items</h3>
 <pre class="r"><code>d_w1_clean2 &lt;- d_w1_clean %&gt;%
   mutate(sdq007_1 = likert_reverse(sdq007_1, top = 2, bottom = 0),
          sdq021_1 = likert_reverse(sdq021_1, top = 2, bottom = 0),
@@ -429,8 +4327,8 @@ higher construct) teamwork_1 = pafas023_1 , pafas024_1* , pafas025_1</p>
          pafas024_1 = likert_reverse(pafas024_1, top = 3, bottom = 0),
          )</code></pre>
 </div>
-<div id="checking-reverse-scoring" class="section level1">
-<h1>checking reverse scoring</h1>
+<div id="checking-reverse-scoring" class="section level3">
+<h3>checking reverse scoring</h3>
 <pre class="r"><code># d_w1_clean$sdq007_1
 # d_w1_clean$pafas003_1
 
@@ -439,8 +4337,8 @@ higher construct) teamwork_1 = pafas023_1 , pafas024_1* , pafas025_1</p>
 
 # Conclusion: the reverse scoring worked. </code></pre>
 </div>
-<div id="internal-consistency-alpha-scores-sdq-scales" class="section level1">
-<h1>internal consistency (alpha scores) # SDQ SCALES</h1>
+<div id="internal-consistency-alpha-scores-sdq-scales" class="section level3">
+<h3>internal consistency (alpha scores) # SDQ SCALES</h3>
 <pre class="r"><code>d_w1_clean2 %&gt;%
   select(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1) %&gt;%
   alpha() # internalizing 0.70</code></pre>
@@ -633,8 +4531,8 @@ d_w1_clean2 %&gt;%
 ## sdq017_1 0.04 0.20 0.76 0.01
 ## sdq020_1 0.10 0.34 0.57 0.02</code></pre>
 </div>
-<div id="internal-consistency-alpha-scores-pafas-scales" class="section level1">
-<h1>internal consistency (alpha scores) # PAFAS SCALES</h1>
+<div id="internal-consistency-alpha-scores-pafas-scales" class="section level3">
+<h3>internal consistency (alpha scores) # PAFAS SCALES</h3>
 <pre class="r"><code>d_w1_clean2 %&gt;%
   select(pafas001_1, pafas003_1, pafas004_1, pafas011_1, pafas012_1) %&gt;%
   alpha() # consistency_1 0.23 - warning: items 3 and 11 neg corr with total scale - why if it&#39;s already recoded?</code></pre>
@@ -859,8 +4757,8 @@ d_w1_clean2 %&gt;%
 ## pafas024_1 0.11 0.07 0.16 0.66 0.26
 ## pafas025_1 0.11 0.10 0.24 0.55 0.23</code></pre>
 </div>
-<div id="internal-consistency-alpha-scores-family-constructs-scales" class="section level1">
-<h1>internal consistency (alpha scores) # FAMILY CONSTRUCTS SCALES</h1>
+<div id="internal-consistency-alpha-scores-family-constructs-scales" class="section level3">
+<h3>internal consistency (alpha scores) # FAMILY CONSTRUCTS SCALES</h3>
 <pre class="r"><code>##### these not added to w1_scales yet ######
 
 # CORE MDM SCALES #
@@ -1113,9 +5011,9 @@ d_w1_clean2 %&gt;%
 ## comfam004_1 0.05 0.12 0.12 0.21 0.51 0.03
 ## comfam006_1 0.02 0.09 0.15 0.19 0.54 0.02</code></pre>
 </div>
-<div id="internal-consistency-alpha-scores-family-school-constructs-scales" class="section level1">
-<h1>internal consistency (alpha scores) # FAMILY-SCHOOL CONSTRUCTS
-SCALES</h1>
+<div id="internal-consistency-alpha-scores-family-school-constructs-scales" class="section level3">
+<h3>internal consistency (alpha scores) # FAMILY-SCHOOL CONSTRUCTS
+SCALES</h3>
 <pre class="r"><code># parent involvement
 d_w1_clean2 %&gt;%
     select(involveduc001_1, involveduc002_1, involveduc003_1, involveduc004_1, involveduc005_1) %&gt;% 
@@ -1278,9 +5176,9 @@ d_w1_clean2 %&gt;%
 ## relpar005_1 0.25 0.25 0.17 0.33 0.03
 ## relpar006_1 0.01 0.07 0.21 0.72 0.03</code></pre>
 </div>
-<div id="internal-consistency-alpha-scores-neighborhoodcommunity-safety" class="section level1">
-<h1>internal consistency (alpha scores) #neighborhood/community
-safety</h1>
+<div id="internal-consistency-alpha-scores-neighborhoodcommunity-safety" class="section level3">
+<h3>internal consistency (alpha scores) #neighborhood/community
+safety</h3>
 <pre class="r"><code>d_w1_clean2 %&gt;%
     select(safeneigh001_1, safeneigh002_1, safeneigh003_1, safeneigh006_1) %&gt;% 
   alpha() # 0.69 unsafe community</code></pre>
@@ -1352,10 +5250,9 @@ safety</h1>
 ## safeneigh007_1 0.04 0.16 0.31 0.50 0.02
 ## safeneigh008_1 0.05 0.15 0.29 0.51 0.02</code></pre>
 </div>
-<div id="renaming-demo-variables-to-serve-as-covariates" class="section level1">
-<h1>renaming demo variables to serve as covariates</h1>
+<div id="renaming-demo-variables-to-serve-as-covariates" class="section level3">
+<h3>renaming demo variables to serve as covariates</h3>
 <pre class="r"><code>d_w1_clean3 &lt;- d_w1_clean2 %&gt;%
-  mutate(record_id = as.character(record_id)) %&gt;%
   rename(affiliation = intro001_1,
          gender = demo001_1,
          age = demo002_1,
@@ -1366,8 +5263,8 @@ safety</h1>
          number_children = demo015_1,
          prim_caregiver = demo021_1)</code></pre>
 </div>
-<div id="scale-creation" class="section level1">
-<h1>scale creation</h1>
+<div id="scale-creation" class="section level3">
+<h3>scale creation</h3>
 <pre class="r"><code>w1_scales &lt;- d_w1_clean3 %&gt;%
   rowwise() %&gt;% 
   mutate(internalizing_1 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
@@ -1391,15 +5288,17 @@ safety</h1>
 # view_df(w1_scales)</code></pre>
 <pre class="r"><code>w1_scales_final &lt;- w1_scales %&gt;%
   select(record_id, condition, wave, affiliation, gender, age, rel_status, ed_level, income_enough, food_insec, number_children, prim_caregiver, internalizing_1, externalizing_1, hyperactivity_1, prosocial_1, coercion_1, encouragement_1, pcpositiverel_1, famrels_1, probsol_1, monitoring_1, famcom_1, emoexpres_1, schinvolv_1, relteach_1, endorse_1, parpeers_1, unsafeneigh_1)</code></pre>
-<div id="wave-2" class="section level207">
-<p class="heading">WAVE 2
-#################################################################</p>
 </div>
 </div>
-<div id="loading-the-dataset-cohort-1---wave-2" class="section level1">
-<h1>Loading the dataset (cohort 1 - wave 2)</h1>
+</div>
+<div id="wave-2" class="section level1">
+<h1>WAVE 2</h1>
+<div id="loading-the-dataset-cohort-1---wave-2" class="section level3">
+<h3>Loading the dataset (cohort 1 - wave 2)</h3>
 <pre class="r"><code>d_raw_w2 &lt;- import(here(&quot;nopublish&quot;, &quot;Cuidadores Medición 2 Cohorte 1.sav&quot;), setclass = &quot;tbl_df&quot;)</code></pre>
-<p>#initial cleaning (wave 2)</p>
+</div>
+<div id="initial-cleaning-wave-2" class="section level3">
+<h3>initial cleaning (wave 2)</h3>
 <pre class="r"><code>d_w2 &lt;- d_raw_w2 %&gt;% 
   select(-4:-6) %&gt;% # selecting out columns with non-relevant data
   clean_names() %&gt;% # function that formats variables&#39; names
@@ -1408,6 +5307,7 @@ safety</h1>
 # d_raw_w1 &lt;- d_raw_c1[-c(1:5), ] # to remove rows of data</code></pre>
 <pre class="r"><code>d_w2_clean &lt;- d_w2 %&gt;% 
   mutate(record_id = as.character(record_id),
+         record_id = ifelse(record_id == 1038, &quot;1038b&quot;, record_id), # because this is grandchild
          record_id = ifelse(record_id == 202.1, 202, record_id),
          record_id = ifelse(record_id == 434.1, 434, record_id),
          record_id = ifelse(record_id == 506.1, 506, record_id),
@@ -1432,19 +5332,17 @@ w1, complete w2) - 1015 complete w1, missing w2 1027.2 (missing w1,
 complete w2) - 1027 complete w1, missing w2 1041.2 (missing w1, complete
 w2) - 1041 complete w1, missing w2 (orange but empty, prob assessor
 input)</p>
-<p>ONCE THIS IS DONE, JOIN THE DATASETS AND CHECK THAT IDENTICAL IDS
-CORRESPOND TO THE SAME ROLE IN WAVE 1 AND WAVE 2</p>
 </div>
-<div id="checking-duplicated-ids-1" class="section level1">
-<h1>Checking duplicated ids</h1>
+<div id="checking-duplicated-ids-1" class="section level3">
+<h3>Checking duplicated ids</h3>
 <pre class="r"><code># data.frame(table(d_w2_clean$record_id)) # NO DUPLICATES</code></pre>
 </div>
-<div id="recoding-na" class="section level1">
-<h1>recoding N/A</h1>
+<div id="recoding-na" class="section level3">
+<h3>recoding N/A</h3>
 <pre class="r"><code>d_w2_clean_2 &lt;- recode_missing_df(d_w2_clean)</code></pre>
 </div>
-<div id="data-prep-reverse-scoring-negatively-worded-items-1" class="section level1">
-<h1>Data prep: reverse scoring negatively worded items</h1>
+<div id="data-prep-reverse-scoring-negatively-worded-items-1" class="section level3">
+<h3>Data prep: reverse scoring negatively worded items</h3>
 <pre class="r"><code>d_w2_clean_3 &lt;- d_w2_clean_2 %&gt;%
   mutate(sdq007_1 = likert_reverse(sdq007_1, top = 2, bottom = 0),
          sdq021_1 = likert_reverse(sdq021_1, top = 2, bottom = 0),
@@ -1458,8 +5356,8 @@ CORRESPOND TO THE SAME ROLE IN WAVE 1 AND WAVE 2</p>
          pafas024_1 = likert_reverse(pafas024_1, top = 3, bottom = 0),
          )</code></pre>
 </div>
-<div id="renaming-demo-variables-to-serve-as-covariates-1" class="section level1">
-<h1>renaming demo variables to serve as covariates</h1>
+<div id="renaming-demo-variables-to-serve-as-covariates-1" class="section level3">
+<h3>renaming demo variables to serve as covariates</h3>
 <pre class="r"><code>d_w2_clean_3 &lt;- d_w2_clean_3 %&gt;%
   rename(wave_2 = wave,
          affiliation_2 = intro001_1,
@@ -1472,8 +5370,8 @@ CORRESPOND TO THE SAME ROLE IN WAVE 1 AND WAVE 2</p>
          number_children_2 = demo015_1,
          prim_caregiver_2 = demo021_1)</code></pre>
 </div>
-<div id="scale-creation-1" class="section level1">
-<h1>scale creation</h1>
+<div id="scale-creation-1" class="section level3">
+<h3>scale creation</h3>
 <pre class="r"><code>w2_scales &lt;- d_w2_clean_3 %&gt;%
   rowwise() %&gt;% 
   mutate(internalizing_2 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
@@ -1495,11 +5393,14 @@ CORRESPOND TO THE SAME ROLE IN WAVE 1 AND WAVE 2</p>
          unsafeneigh_2 = mean(c(safeneigh001_1, safeneigh002_1, safeneigh003_1, safeneigh006_1), na.rm = TRUE))
 
 # view_df(w1_scales)</code></pre>
+</div>
+<div id="selescting-variables" class="section level3">
+<h3>selescting variables</h3>
 <pre class="r"><code>w2_scales_final &lt;- w2_scales %&gt;%
   select(record_id, condition, wave_2, affiliation_2, gender_2, age_2, rel_status_2, ed_level_2, income_enough_2, food_insec_2, number_children_2, prim_caregiver_2, internalizing_2, externalizing_2, hyperactivity_2, prosocial_2, coercion_2, encouragement_2, pcpositiverel_2, famrels_2, probsol_2, monitoring_2, famcom_2, emoexpres_2, schinvolv_2, relteach_2, endorse_2, parpeers_2, unsafeneigh_2)</code></pre>
-<div id="section" class="section level2">
-<h2>————————————————————————————————————————–</h2>
-<hr />
+</div>
+<div id="wave-1-final-scales" class="section level3">
+<h3>wave 1 final scales</h3>
 <pre class="r"><code>w1_scales_final</code></pre>
 <pre><code>## # A tibble: 376 × 29
 ## # Rowwise: 
@@ -1522,6 +5423,9 @@ CORRESPOND TO THE SAME ROLE IN WAVE 1 AND WAVE 2</p>
 ## #   coercion_1 &lt;dbl&gt;, encouragement_1 &lt;dbl&gt;, pcpositiverel_1 &lt;dbl&gt;,
 ## #   famrels_1 &lt;dbl&gt;, probsol_1 &lt;dbl&gt;, monitoring_1 &lt;dbl&gt;, famcom_1 &lt;dbl&gt;,
 ## #   emoexpres_1 &lt;dbl&gt;, schinvolv_1 &lt;dbl&gt;, relteach_1 &lt;dbl&gt;, endorse_1 &lt;dbl&gt;, …</code></pre>
+</div>
+<div id="wave-2-final-scales" class="section level3">
+<h3>wave 2 final scales</h3>
 <pre class="r"><code>w2_scales_final</code></pre>
 <pre><code>## # A tibble: 284 × 29
 ## # Rowwise: 
@@ -1544,14 +5448,37 @@ CORRESPOND TO THE SAME ROLE IN WAVE 1 AND WAVE 2</p>
 ## #   prosocial_2 &lt;dbl&gt;, coercion_2 &lt;dbl&gt;, encouragement_2 &lt;dbl&gt;,
 ## #   pcpositiverel_2 &lt;dbl&gt;, famrels_2 &lt;dbl&gt;, probsol_2 &lt;dbl&gt;,
 ## #   monitoring_2 &lt;dbl&gt;, famcom_2 &lt;dbl&gt;, emoexpres_2 &lt;dbl&gt;, schinvolv_2 &lt;dbl&gt;, …</code></pre>
-<pre class="r"><code>test &lt;- full_join(w1_scales_final, w2_scales_final, by = c(&quot;record_id&quot;, &quot;condition&quot;)) %&gt;%
-    arrange(record_id)</code></pre>
-<p>duplicated case: id 1038 waiting to hear what to do.</p>
-<p>After this is resolved, export dataset and create a codebook.</p>
 </div>
+<div id="wave-1-and-2-final-dataset" class="section level3">
+<h3>wave 1 and 2 final dataset</h3>
+<pre class="r"><code>caregiver_w1_w2 &lt;- full_join(w1_scales_final, w2_scales_final, by = c(&quot;record_id&quot;, &quot;condition&quot;))</code></pre>
 </div>
-<div id="descriptive-stats-function" class="section level1">
-<h1>descriptive stats function</h1>
+<div id="descriptive-stats-function" class="section level3">
+<h3>descriptive stats function</h3>
+</div>
+<div id="descriptives" class="section level3">
+<h3>Descriptives</h3>
+<pre class="r"><code>descriptives(caregiver_w1_w2) # some variables are categorical; for those variables the computations are meaningless</code></pre>
+<pre><code>## # A tibble: 53 × 8
+##    column              n n_valid    na     M    SD   Min   Max
+##    &lt;chr&gt;           &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 condition         402     402     0  1.43  0.5      1     2
+##  2 wave              402     376    26  1     0        1     1
+##  3 gender            402     374    28  1.12  0.32     1     2
+##  4 age               402     366    36 37.0   9.6      9    70
+##  5 rel_status        402     372    30  2.09  0.98     1     6
+##  6 ed_level          402     367    35  5.27  2.27     1     9
+##  7 income_enough     402     341    61  2.53  0.77     1     4
+##  8 food_insec        402     353    49  0.29  0.46     0     1
+##  9 number_children   402     375    27  2.63  1.5      0    14
+## 10 prim_caregiver    402     366    36  0.92  0.27     0     1
+## # ℹ 43 more rows</code></pre>
+</div>
+<div id="exporting-dataset" class="section level3">
+<h3>exporting dataset</h3>
+<pre class="r"><code># caregiver_w1_w2 %&gt;%
+#   haven::write_sav(here(&quot;nopublish&quot;, &quot;caregiver_w1_w2 - scales &amp; covariates.sav&quot;))</code></pre>
+</div>
 </div>
 
 
