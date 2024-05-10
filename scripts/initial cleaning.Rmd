@@ -168,9 +168,13 @@ d_w1_clean2 %>%
 #   select(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1) %>%
 #   alpha() # externalizing 0.58
 
+# d_w1_clean2 %>%
+#   select(sdq005_1, sdq007_1, sdq012_1, sdq018_1) %>%
+#   alpha() # externalizing 0.60 Removed item on stealing
+
 d_w1_clean2 %>%
-  select(sdq005_1, sdq007_1, sdq012_1, sdq018_1) %>%
-  alpha() # externalizing 0.60 Removed item on stealing
+  select(sdq005_1, sdq012_1, sdq018_1) %>%
+  alpha() # externalizing 0.64 Removed item on obedience
 
 d_w1_clean2 %>%
   select(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1) %>%
@@ -515,6 +519,16 @@ descriptives <- function(df) {
 ### Descriptives 
 ```{r}
 descriptives(caregiver_w1_w2) # some variables are categorical; for those variables the computations are meaningless
+```
+```{r}
+descrip_table <- descriptives(caregiver_w1_w2) %>%
+  rename(c("Scale" = "column"))
+```
+
+```{r}
+descrip_table %>%
+  kbl() %>%
+  kable_material(c("striped", "hover", font_size = 7)) 
 ```
 
 
