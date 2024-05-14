@@ -4605,39 +4605,40 @@ higher construct) teamwork_1 = pafas023_1 , pafas024_1* , pafas025_1</p>
 #   select(sdq005_1, sdq007_1, sdq012_1, sdq018_1, sdq022_1) %&gt;%
 #   alpha() # externalizing 0.58
 
+# d_w1_clean2 %&gt;%
+#   select(sdq005_1, sdq007_1, sdq012_1, sdq018_1) %&gt;%
+#   alpha() # externalizing 0.60 Removed item on stealing
+
 d_w1_clean2 %&gt;%
-  select(sdq005_1, sdq007_1, sdq012_1, sdq018_1) %&gt;%
-  alpha() # externalizing 0.60 Removed item on stealing</code></pre>
+  select(sdq005_1, sdq012_1, sdq018_1) %&gt;%
+  alpha() # externalizing 0.64 Removed item on obedience</code></pre>
 <pre><code>## 
 ## Reliability analysis   
 ## Call: alpha(x = .)
 ## 
-##   raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r
-##        0.6       0.6    0.55      0.27 1.5 0.033 0.54 0.47     0.25
+##   raw_alpha std.alpha G6(smc) average_r S/N  ase mean   sd median_r
+##       0.64      0.65    0.56      0.38 1.8 0.03 0.52 0.52      0.4
 ## 
 ##     95% confidence boundaries 
 ##          lower alpha upper
-## Feldt     0.53   0.6  0.66
-## Duhachek  0.53   0.6  0.66
+## Feldt     0.58  0.64   0.7
+## Duhachek  0.58  0.64   0.7
 ## 
 ##  Reliability if an item is dropped:
-##          raw_alpha std.alpha G6(smc) average_r  S/N alpha se  var.r med.r
-## sdq005_1      0.41      0.41    0.33      0.19 0.71    0.053 0.0062  0.16
-## sdq007_1      0.64      0.65    0.56      0.38 1.82    0.030 0.0074  0.40
-## sdq012_1      0.53      0.53    0.45      0.27 1.12    0.042 0.0241  0.21
-## sdq018_1      0.49      0.50    0.42      0.25 1.00    0.044 0.0188  0.21
+##          raw_alpha std.alpha G6(smc) average_r  S/N alpha se var.r med.r
+## sdq005_1      0.44      0.44    0.28      0.28 0.78    0.058    NA  0.28
+## sdq012_1      0.61      0.62    0.45      0.45 1.62    0.039    NA  0.45
+## sdq018_1      0.55      0.57    0.40      0.40 1.34    0.043    NA  0.40
 ## 
 ##  Item statistics 
 ##            n raw.r std.r r.cor r.drop mean   sd
-## sdq005_1 366  0.79  0.76  0.68   0.51 0.73 0.79
-## sdq007_1 370  0.58  0.56  0.28   0.22 0.60 0.70
-## sdq012_1 369  0.64  0.67  0.50   0.39 0.30 0.57
-## sdq018_1 366  0.69  0.70  0.55   0.43 0.51 0.64
+## sdq005_1 366  0.85  0.81  0.66   0.53 0.73 0.79
+## sdq012_1 369  0.70  0.73  0.50   0.41 0.30 0.57
+## sdq018_1 366  0.76  0.75  0.55   0.45 0.51 0.64
 ## 
 ## Non missing response frequency for each item
 ##             0    1    2 miss
 ## sdq005_1 0.49 0.30 0.21 0.03
-## sdq007_1 0.52 0.36 0.12 0.02
 ## sdq012_1 0.75 0.20 0.05 0.02
 ## sdq018_1 0.57 0.36 0.08 0.03</code></pre>
 <pre class="r"><code>d_w1_clean2 %&gt;%
@@ -5492,7 +5493,7 @@ safety</h3>
 <pre class="r"><code>w1_scales &lt;- d_w1_clean3 %&gt;%
   rowwise() %&gt;% 
   mutate(internalizing_1 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
-         externalizing_1 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1), na.rm = TRUE),
+         externalizing_1 = mean(c(sdq005_1, sdq012_1, sdq018_1), na.rm = TRUE),
          hyperactivity_1 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
          prosocial_1 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
          coercion_1 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
@@ -5599,7 +5600,7 @@ input)</p>
 <pre class="r"><code>w2_scales &lt;- d_w2_clean_3 %&gt;%
   rowwise() %&gt;% 
   mutate(internalizing_2 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
-         externalizing_2 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1), na.rm = TRUE),
+         externalizing_2 = mean(c(sdq005_1, sdq012_1, sdq018_1), na.rm = TRUE),
          hyperactivity_2 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
          prosocial_2 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
          coercion_2 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
@@ -6026,16 +6027,16 @@ externalizing_1
 402
 </td>
 <td style="text-align:right;">
-375
+374
 </td>
 <td style="text-align:right;">
-27
+28
 </td>
 <td style="text-align:right;">
-0.54
+0.52
 </td>
 <td style="text-align:right;">
-0.47
+0.52
 </td>
 <td style="text-align:right;">
 0.00
@@ -6708,10 +6709,10 @@ externalizing_2
 119
 </td>
 <td style="text-align:right;">
-0.51
+0.52
 </td>
 <td style="text-align:right;">
-0.45
+0.50
 </td>
 <td style="text-align:right;">
 0.00
@@ -7116,7 +7117,7 @@ unsafeneigh_2
 <div id="exporting-dataset" class="section level3">
 <h3>exporting dataset</h3>
 <pre class="r"><code># caregiver_w1_w2 %&gt;%
-#   haven::write_sav(here(&quot;nopublish&quot;, &quot;caregiver_w1_w2 - scales &amp; covariates.sav&quot;))</code></pre>
+#   haven::write_sav(here(&quot;nopublish&quot;, &quot;caregiver_w1_w2 - scales &amp; covariates_updated.sav&quot;))</code></pre>
 </div>
 </div>
 

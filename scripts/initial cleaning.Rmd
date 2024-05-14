@@ -317,7 +317,7 @@ d_w1_clean3 <- d_w1_clean2 %>%
 w1_scales <- d_w1_clean3 %>%
   rowwise() %>% 
   mutate(internalizing_1 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
-         externalizing_1 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1), na.rm = TRUE),
+         externalizing_1 = mean(c(sdq005_1, sdq012_1, sdq018_1), na.rm = TRUE),
          hyperactivity_1 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
          prosocial_1 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
          coercion_1 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
@@ -447,7 +447,7 @@ d_w2_clean_3 <- d_w2_clean_3 %>%
 w2_scales <- d_w2_clean_3 %>%
   rowwise() %>% 
   mutate(internalizing_2 = mean(c(sdq003_1, sdq008_1, sdq013_1, sdq016_1, sdq024_1), na.rm = TRUE),
-         externalizing_2 = mean(c(sdq005_1, sdq007_1, sdq012_1, sdq018_1), na.rm = TRUE),
+         externalizing_2 = mean(c(sdq005_1, sdq012_1, sdq018_1), na.rm = TRUE),
          hyperactivity_2 = mean(c(sdq002_1, sdq010_1, sdq015_1, sdq021_1, sdq025_1), na.rm = TRUE),
          prosocial_2 = mean(c(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1), na.rm = TRUE),
          coercion_2 = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
@@ -535,5 +535,5 @@ descrip_table %>%
 ### exporting dataset
 ```{r}
 # caregiver_w1_w2 %>%
-#   haven::write_sav(here("nopublish", "caregiver_w1_w2 - scales & covariates.sav"))
+#   haven::write_sav(here("nopublish", "caregiver_w1_w2 - scales & covariates_updated.sav"))
 ```
