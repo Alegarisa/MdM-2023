@@ -1,0 +1,41 @@
+---
+title: "baseline paper"
+author: "Ale Garcia"
+date: "2025-03-26"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(rio)
+library(here)
+library(tidyverse)
+library(haven)
+library(janitor)
+library(knitr)
+library(surveytoolbox)
+library(sjPlot)
+library(kableExtra)
+library(psych)
+library(sjmisc)
+
+theme_set(theme_minimal())
+```
+
+# WAVE 1 - COHORT 1
+
+### Loading the dataset (cohort 1 - wave 1)
+```{r}
+d_raw_w1c1 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 1.ESP.sav"), setclass = "tbl_df")
+```
+
+
+# WAVE 1 - COHORT 2
+
+### Loading the dataset (cohort 1 - wave 1)
+```{r}
+d_raw_w1c2 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 2.ESP.sav"), setclass = "tbl_df")
+```
+
