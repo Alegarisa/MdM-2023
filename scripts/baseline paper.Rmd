@@ -24,18 +24,141 @@ library(sjmisc)
 theme_set(theme_minimal())
 ```
 
-# WAVE 1 - COHORT 1
+## WAVE 1 - COHORT 1
+
+379 Rows. 9 rows with no identifiers. 
 
 ### Loading the dataset (cohort 1 - wave 1)
 ```{r}
 d_raw_w1c1 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 1.ESP.sav"), setclass = "tbl_df")
+
+d_w1c1 <- d_raw_w1c1 %>% 
+  select(-2:-4) %>% # selecting out columns with non-relevant data
+  clean_names() %>% # function that formats variables' names
+  arrange(record_id) %>% # ordering participants ids in descending order
+  mutate(cohort = 1) %>% # creating cohort variable, in case 
+  select(1, cohort, everything()) # moving cohort var to place 2
+
+view_df(d_w1c1)
+
+data.frame(table(d_w1c1$record_id)) # no duplicated ids
+
+sum(is.na(d_w1c1$record_id)) # 9 rows don't have an identifier 
 ```
 
 
 # WAVE 1 - COHORT 2
 
+846 Rows. 2 rows with no identifiers. 
+
 ### Loading the dataset (cohort 1 - wave 1)
 ```{r}
 d_raw_w1c2 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 2.ESP.sav"), setclass = "tbl_df")
+
+d_w1c2 <- d_raw_w1c2 %>% 
+  select(-2:-4) %>% # selecting out columns with non-relevant data
+  clean_names() %>% # function that formats variables' names
+  arrange(record_id) %>% # ordering participants ids in descending order
+  mutate(cohort = 2) %>% # creating cohort variable, in case 
+  select(1, cohort, everything())
+
+view_df(d_w1c2)
+
+data.frame(table(d_w1c2$record_id)) # no duplicated ids
+
+sum(is.na(d_w1c2$record_id)) # 2 rows don't have an identifier 
 ```
 
+## Joining cohort 1 and 2 (this is only wave 1)
+
+1225 rows, 11 with no identifiers.  
+
+Two ids for a 2701
+2701.1
+2701.2
+
+```{r}
+dw1 <- full_join(d_w1c1, d_w1c2) %>% 
+  arrange(record_id)
+
+data.frame(table(dw1$record_id)) # no duplicated ids
+
+sum(is.na(dw1$record_id)) # 11 rows don't have an identifier 
+```
+
+```{r}
+view_df(dw1)
+```
+
+```{r}
+dw1 %>%
+  count(demo001_1) %>%
+  mutate(percentage = n / sum(n) * 100) %>%
+  ggplot(aes(x = reorder(demo001_1, -percentage), y = percentage)) +
+  geom_bar(stat = "identity", fill = "#4682B4") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            vjust = -0.5, size = 4) +
+  labs(title = "Distribution of demo001_1",
+       x = NULL, y = "Percentage") +
+  theme_minimal()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#######################################################################################
+```{r}
+dw1 %>%
+  count(demo001_1)
+
+# Step 1: Recode values with labels
+dw1 <- dw1 %>%
+  mutate(demo001_1_label = case_when(
+    demo001_1 == 1 ~ "Female",
+    demo001_1 == 2 ~ "Male",
+    demo001_1 == 99 ~ "No response",
+    TRUE ~ "Missing"
+  ))
+
+# Step 2: Count and calculate percentages
+demo_counts <- dw1 %>%
+  count(demo001_1_label) %>%
+  mutate(percent = round(100 * n / sum(n), 1),
+         label = paste0(demo001_1_label, " (", percent, "%)"))
+
+# Step 3: Create pie chart with percentages
+ggplot(demo_counts, aes(x = "", y = n, fill = demo001_1_label)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = paste0(percent, "%")),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 4.5) +
+  theme_void() +
+  labs(title = "Gender Distribution",
+       fill = "Gender") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        legend.title = element_text(face = "bold"))
+```
