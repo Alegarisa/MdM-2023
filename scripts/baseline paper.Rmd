@@ -270,8 +270,124 @@ sum(is.na(pri_w1$record_id)) # all rows with an identifier
 view_df(pri_w1)
 ```
 
+# Full datasets for all participant-types
+
+### parents
+
+female caregivers = 1057
+male caregivers = 163
+99 = 4 
+NA = 1 
+total = 1225
+
+intro001_1:
+1, Soy su madre = 920
+2, Soy su padre = 131
+3, Otra relación = 169
+
+demo001_1:
+1, Femenino
+2, Masculino
+99, Prefiero no responder	
+
+Sleuthing:
+99 = co1: 835 (tia), co2: 2122 (dad), 2542 (?), 2824(mom) = 2 female, 1 male, 1 ?
+NA = co1: 438 (mom) = 1 female
+
+Conclusions of my sleuthing: 
+female caregivers = 1060
+male caregivers = 164
+1 row with 99, id 2542 (?)
+total = 1225
+
+```{r}
+par_w1
+view_df(par_w1)
+
+par_w1 %>%
+  	count(demo001_1)
+
+# to identify who are the 99
+par_w1 %>%
+  	filter(demo001_1 == 99)
+
+# to identify who is the na
+par_w1 %>% filter(is.na(demo001_1))
+
+par_w1 %>% filter(record_id == "835") 
+par_w1 %>% filter(record_id == "2122") 
+par_w1 %>% filter(record_id == "2542") # lots of prefer not to respond
+par_w1 %>% filter(record_id == "2824") 
+par_w1 %>% filter(record_id == "438") # lots of prefer not to respond
+
+```
+### students
+
+girls = 602
+boys = 611
+
+total = 1213
+
+```{r}
+stu_w1
+view_df(stu_w1)
+
+stu_w1 %>%
+  	count(demo002)
+```
+
+### teachers
+
+demo001_3
+0, Femenino
+1, Masculino
+99, Prefiero no responder
+
+Female = 317
+male = 55
+99 = 2 (co1: 1174, co2: 2180) --> they self-report as primary caregivers
+
+eyeballing: 
+demo001_3 = 2 rows with 99 and 1 row with na
+
+```{r}
+edu_w1
+view_df(edu_w1)
+
+edu_w1 %>%
+  	count(demo001_3)
+
+# to identify who are the 99
+edu_w1 %>% filter(demo001_3 == "99") 
+
+# to identify who is the na
+edu_w1 %>% filter(is.na(demo001_3))
+
+edu_w1 %>% filter(record_id == "1376") # no data (only 0 and na)
+edu_w1 %>% filter(record_id == "1174")
+edu_w1 %>% filter(record_id == "2180")
+```
 
 
+### principals 
+demo001_4
+1, Femenino
+2, Masculino
+99, Prefiero no responder
 
+1, female = 19
+2, male = 11
 
+```{r}
+pri_w1
+view_df(pri_w1)
 
+pri_w1 %>%
+  	count(demo001_4)
+
+# to identify who are the 99
+pri_w1 %>% filter(demo001_4 == "99") 
+
+# to identify who is the na
+pri_w1 %>% filter(is.na(demo001_4)) # no na in this dataset
+```
