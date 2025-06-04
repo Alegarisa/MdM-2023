@@ -84,6 +84,8 @@ sum(is.na(par_w1$record_id)) # 11 rows don't have an identifier
 ```{r}
 view_df(par_w1)
 ```
+0202_1
+0202_2
 
 #######################################################################################
 STUDENTS
@@ -146,6 +148,22 @@ sum(is.na(stu_w1$record_id)) # 2 rows don't have an identifier
 ```{r}
 view_df(stu_w1)
 ```
+
+### 06.04.25: with JAA identified that:
+
+1038_a = 9 años, niño en cuarto grado cambiar a 1038.1
+1038_b = 11 años, niña en quinto grado cambiar a 1038.1
+
+```{r}
+which(is.na(stu_w1$record_id)) # gives the rows
+  
+stu_w1$record_id[1212] <- "1038.1"
+stu_w1$record_id[1213] <- "1038.2"
+
+stu_w1 <- stu_w1 %>%
+  arrange(record_id)
+```
+
 
 #######################################################################################
 EDUCATORS
@@ -336,6 +354,53 @@ stu_w1 %>%
   	count(demo002)
 ```
 
+```{r}
+stu_w1 %>% 
+  mean(demo001, na.rm = TRUE)
+
+# age
+mean(stu_w1$demo001, na.rm = TRUE)
+sd(stu_w1$demo001, na.rm = TRUE)
+
+# gender
+stu_w1 %>%
+  count(demo002) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# grade
+stu_w1 %>%
+  count(demo003) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# # of people they live with
+mean(stu_w1$demo004, na.rm = TRUE)
+sd(stu_w1$demo004, na.rm = TRUE)
+
+stu_w1 %>%
+  filter(demo004 >= 7) %>%
+  nrow()
+
+stu_w1 %>%
+  filter(demo006input_a >= 10) %>%
+  nrow()
+
+# job
+stu_w1 %>%
+  count(demo006) %>%
+  mutate(percent = n / sum(n) * 100)
+
+stu_w1 %>%
+  count(school001) %>%
+  mutate(percent = n / sum(n) * 100)
+
+
+```
+```{r}
+
+```
+
+
+
 ### teachers
 
 demo001_3
@@ -391,3 +456,7 @@ pri_w1 %>% filter(demo001_4 == "99")
 # to identify who is the na
 pri_w1 %>% filter(is.na(demo001_4)) # no na in this dataset
 ```
+
+
+
+
