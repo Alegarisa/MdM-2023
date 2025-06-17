@@ -32,8 +32,15 @@ theme_set(theme_minimal())
 Before 06/04/25, 9 rows with no identifiers. I asked JAA to re_uploaded the data with all identifiers, and he did on 06/05/25. Today is 06/17/25 and I confirmed that all rows have identifiers. Although I am habing issues using import and here. Using foreign does work. 
 
 ### Loading the dataset (cohort 1 - wave 1)
+
 ```{r}
-# raw_par_w1c1 <- import(here("nopublish", "01_SPSS Caregivers Assessment 1 Cohort 1_ESP (1).sav"), setclass = "tbl_df")
+# raw_par_w1c1 <- read.spss(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 1.ESP.sav"),
+#                           to.data.frame = TRUE) # this dataset is the upload that still has missing IDs. It only shows the value labels, but not the values. QUANT analyses can't be completed. I am unsure if this is due to foreign or for some other reason. 
+```
+
+
+```{r}
+# raw_par_w1c1 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 1.ESP.sav"), setclass = "tbl_df")
 
 raw_par_w1c1 <- read.spss(here("nopublish", "01_SPSS Caregivers Assessment 1 Cohort 1_ESP (1).sav"),
                           to.data.frame = TRUE)
