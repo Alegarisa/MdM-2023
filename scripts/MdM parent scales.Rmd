@@ -1,0 +1,30 @@
+---
+title: "MdM parent scales"
+author: "Alejandra Garcia Isaza"
+date: "2025-06-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(rio)
+library(here)
+library(tidyverse)
+library(haven)
+library(janitor)
+library(knitr)
+library(surveytoolbox)
+library(sjPlot)
+library(kableExtra)
+library(psych)
+library(sjmisc)
+
+theme_set(theme_minimal())
+```
+
+
+### Loading the dataset (cohort 1 - wave 1)
+```{r}
+d <- import(here("nopublish", "caregiver_w1_w2 - scales & covariates.sav"), setclass = "tbl_df")
+```
