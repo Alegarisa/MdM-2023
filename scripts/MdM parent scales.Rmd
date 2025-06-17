@@ -24,7 +24,7 @@ theme_set(theme_minimal())
 ```
 
 
-### Loading the dataset (cohort 1 - wave 1)
+### Loading the dataset (cohort 1 and 2 - wave 1)
 ```{r}
-d <- import(here("nopublish", "caregiver_w1_w2 - scales & covariates.sav"), setclass = "tbl_df")
+d <- import(here("nopublish", "par_all_w1.sav"), setclass = "tbl_df")
 ```

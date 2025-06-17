@@ -20,17 +20,23 @@ library(sjPlot)
 library(kableExtra)
 library(psych)
 library(sjmisc)
+library(foreign)
 
 theme_set(theme_minimal())
 ```
 
 ## WAVE 1 - COHORT 1
 
-379 Rows. 9 rows with no identifiers. 
+379 Rows. 
+
+Before 06/04/25, 9 rows with no identifiers. I asked JAA to re_uploaded the data with all identifiers, and he did on 06/05/25. Today is 06/17/25 and I confirmed that all rows have identifiers. Although I am habing issues using import and here. Using foreign does work. 
 
 ### Loading the dataset (cohort 1 - wave 1)
 ```{r}
-raw_par_w1c1 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 1.ESP.sav"), setclass = "tbl_df")
+# raw_par_w1c1 <- import(here("nopublish", "01_SPSS Caregivers Assessment 1 Cohort 1_ESP (1).sav"), setclass = "tbl_df")
+
+raw_par_w1c1 <- read.spss(here("nopublish", "01_SPSS Caregivers Assessment 1 Cohort 1_ESP (1).sav"),
+                          to.data.frame = TRUE)
 
 par_w1c1 <- raw_par_w1c1 %>% 
   select(-2:-4) %>% # selecting out columns with non-relevant data
@@ -41,7 +47,7 @@ par_w1c1 <- raw_par_w1c1 %>%
 
 data.frame(table(par_w1c1$record_id)) # no duplicated ids
 
-sum(is.na(par_w1c1$record_id)) # 9 rows don't have an identifier 
+sum(is.na(par_w1c1$record_id)) # all rows have an identifier 
 ```
 
 # WAVE 1 - COHORT 2
@@ -50,7 +56,10 @@ sum(is.na(par_w1c1$record_id)) # 9 rows don't have an identifier
 
 ### Loading the dataset (cohort 1 - wave 1)
 ```{r}
-raw_par_w1c2 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 2.ESP.sav"), setclass = "tbl_df")
+# raw_par_w1c2 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 2.ESP.sav"), setclass = "tbl_df")
+
+raw_par_w1c2 <- read.spss(here("nopublish", "01_SPSS Caregivers Assessment 1 Cohort 2_ESP (1).sav"),
+                          to.data.frame = TRUE)
 
 par_w1c2 <- raw_par_w1c2 %>% 
   select(-2:-4) %>% # selecting out columns with non-relevant data
@@ -61,7 +70,7 @@ par_w1c2 <- raw_par_w1c2 %>%
 
 data.frame(table(par_w1c2$record_id)) # no duplicated ids
 
-sum(is.na(par_w1c2$record_id)) # 2 rows don't have an identifier 
+sum(is.na(par_w1c2$record_id)) # all rows have an identifier 
 ```
 
 ## Merging parent cohort 1 and 2 (this is only wave 1)
@@ -78,12 +87,18 @@ par_w1 <- full_join(par_w1c1, par_w1c2) %>%
 
 data.frame(table(par_w1$record_id)) # no duplicated ids
 
-sum(is.na(par_w1$record_id)) # 11 rows don't have an identifier 
+sum(is.na(par_w1$record_id)) # all rows have an identifier 
 ```
 
 ```{r}
 view_df(par_w1)
 ```
+```{r}
+par_w1 %>%
+  haven::write_sav(here("nopublish", "par_all_w1.sav"))
+```
+
+
 0202_1
 0202_2
 
