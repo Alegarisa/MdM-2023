@@ -32,18 +32,8 @@ theme_set(theme_minimal())
 Before 06/04/25, 9 rows with no identifiers. I asked JAA to re_uploaded the data with all identifiers, and he did on 06/05/25. Today is 06/17/25 and I confirmed that all rows have identifiers. Although I am habing issues using import and here. Using foreign does work. 
 
 ### Loading the dataset (cohort 1 - wave 1)
-
 ```{r}
-# raw_par_w1c1 <- read.spss(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 1.ESP.sav"),
-#                           to.data.frame = TRUE) # this dataset is the upload that still has missing IDs. It only shows the value labels, but not the values. QUANT analyses can't be completed. I am unsure if this is due to foreign or for some other reason. 
-```
-
-
-```{r}
-# raw_par_w1c1 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 1.ESP.sav"), setclass = "tbl_df")
-
-raw_par_w1c1 <- read.spss(here("nopublish", "01_SPSS Caregivers Assessment 1 Cohort 1_ESP (1).sav"),
-                          to.data.frame = TRUE)
+raw_par_w1c1 <- import(here("nopublish", "caregivers_assessment_1_co1.sav"), setclass = "tbl_df")
 
 par_w1c1 <- raw_par_w1c1 %>% 
   select(-2:-4) %>% # selecting out columns with non-relevant data
@@ -55,18 +45,17 @@ par_w1c1 <- raw_par_w1c1 %>%
 data.frame(table(par_w1c1$record_id)) # no duplicated ids
 
 sum(is.na(par_w1c1$record_id)) # all rows have an identifier 
+
+view_df(par_w1c1) # this shows values and value labels and prefer not to respond is 99, no aplica 77
 ```
 
 # WAVE 1 - COHORT 2
 
 846 Rows. 2 rows with no identifiers. 
 
-### Loading the dataset (cohort 1 - wave 1)
+### Loading the dataset (cohort 2 - wave 1)
 ```{r}
-# raw_par_w1c2 <- import(here("nopublish", "01. SPSS Caregivers Assessment 1 Cohort 2.ESP.sav"), setclass = "tbl_df")
-
-raw_par_w1c2 <- read.spss(here("nopublish", "01_SPSS Caregivers Assessment 1 Cohort 2_ESP (1).sav"),
-                          to.data.frame = TRUE)
+raw_par_w1c2 <- import(here("nopublish", "caregivers_assessment_1_co2.sav"), setclass = "tbl_df")
 
 par_w1c2 <- raw_par_w1c2 %>% 
   select(-2:-4) %>% # selecting out columns with non-relevant data
@@ -78,6 +67,8 @@ par_w1c2 <- raw_par_w1c2 %>%
 data.frame(table(par_w1c2$record_id)) # no duplicated ids
 
 sum(is.na(par_w1c2$record_id)) # all rows have an identifier 
+
+view_df(par_w1c2) # this shows values and value labels and prefer not to respond is 99, no aplica 77
 ```
 
 ## Merging parent cohort 1 and 2 (this is only wave 1)
@@ -95,14 +86,13 @@ par_w1 <- full_join(par_w1c1, par_w1c2) %>%
 data.frame(table(par_w1$record_id)) # no duplicated ids
 
 sum(is.na(par_w1$record_id)) # all rows have an identifier 
+
+view_df(par_w1) # this shows values and value labels and prefer not to respond is 99, no aplica 77
 ```
 
 ```{r}
-view_df(par_w1)
-```
-```{r}
 par_w1 %>%
-  haven::write_sav(here("nopublish", "par_all_w1.sav"))
+  haven::write_sav(here("data", "caregivers_co1_co2_w1.sav"))
 ```
 
 
