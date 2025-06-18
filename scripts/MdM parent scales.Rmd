@@ -26,38 +26,60 @@ theme_set(theme_minimal())
 
 ### Loading the dataset (cohort 1 and 2 - wave 1)
 ```{r}
-d <- import(here("nopublish", "par_all_w1.sav"), setclass = "tbl_df")
+d <- import(here("data", "caregivers_co1_co2_w1.sav"), setclass = "tbl_df")
+
+view_df(d) # it is not showing each value label separate. Values appear as range, but I believe that when I created the new dataset using haven export. 
 ```
 
 
-```{r}
-view_df(d) # in this dataset JAA relabeled 99 (prefer not to respond) as 5, 6, 7, and 10 in different variables
+### recoding missing variables as N/A
+```{r include=FALSE}
+
+# vector with missing values in dataset
+missing_vals <- c(77, 98, 99)
+
+# function that returns true if values in vector are equal to missing_vals. The function takes a vector x, and specified values of missing data
+recode_missing <- function(x, missing_vals = c(77, 98, 99)) {
+  test <- x %in% missing_vals
+  ifelse(test, NA, x)
+}
+
+# function that recodes missing values to NA. The function takes a dataframe with variables with missing data, and specified values of missing data
+recode_missing_df <- function(df, missing_vals = c(77, 98, 99)) {
+  modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
+}
+
+d1 <- recode_missing_df(d) # the function strips out variable labels
 ```
+
 ### Data prep: reverse scoring negatively worded items
 
-This won't work because JAA changed the 99 = prefer not to respond to 5, 6, 7, and 10 (e.g., demo004_1) in different variables. My usual function to recode won't work, I believe, because there are some valid cases where 5 (e.g., demo003_1), 6, and 7 are the correct values. 
-
+SDQ values = 0, 1, 2
+PAFAS values = 0, 1, 2, 3
 ```{r}
-# d1 <- d %>%
-#   mutate(sdq007_1 = likert_reverse(sdq007_1, top = 2, bottom = 0),
-#          sdq021_1 = likert_reverse(sdq021_1, top = 2, bottom = 0),
-#          sdq025_1 = likert_reverse(sdq025_1, top = 2, bottom = 0),
-#          sdq011_1 = likert_reverse(sdq011_1, top = 2, bottom = 0),
-#          sdq014_1 = likert_reverse(sdq014_1, top = 2, bottom = 0),
-#          pafas003_1 = likert_reverse(pafas003_1, top = 3, bottom = 0),
-#          pafas011_1 = likert_reverse(pafas011_1, top = 3, bottom = 0),
-#          pafas019_1 = likert_reverse(pafas019_1, top = 3, bottom = 0),
-#          pafas020_1 = likert_reverse(pafas020_1, top = 3, bottom = 0),
-#          couple001_2 = likert_reverse(couple001_2, top = 3, bottom = 0),
-#          )
+d2 <- d1 %>%
+  mutate(sdq007_1 = likert_reverse(sdq007_1, top = 2, bottom = 0),
+         sdq021_1 = likert_reverse(sdq021_1, top = 2, bottom = 0),
+         sdq025_1 = likert_reverse(sdq025_1, top = 2, bottom = 0),
+         sdq011_1 = likert_reverse(sdq011_1, top = 2, bottom = 0),
+         sdq014_1 = likert_reverse(sdq014_1, top = 2, bottom = 0),
+         pafas003_1 = likert_reverse(pafas003_1, top = 3, bottom = 0),
+         pafas011_1 = likert_reverse(pafas011_1, top = 3, bottom = 0),
+         pafas019_1 = likert_reverse(pafas019_1, top = 3, bottom = 0),
+         pafas020_1 = likert_reverse(pafas020_1, top = 3, bottom = 0),
+         couple001_2 = likert_reverse(couple001_2, top = 3, bottom = 0),
+         )
 ```
 
 
 ### checking reverse scoring
 ```{r}
-# d$sdq007_1
-# d1$sdq007_1
-# 
-# # Conclusion: 
+d1$sdq007_1
+d2$sdq007_1
+# Conclusion: it worked
+
+d1$pafas019_1
+d2$pafas019_1
+# Conclusion: it worked
 ```
 
