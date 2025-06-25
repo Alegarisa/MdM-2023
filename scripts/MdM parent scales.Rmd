@@ -28,7 +28,7 @@ theme_set(theme_minimal())
 ```{r}
 d <- import(here("data", "caregivers_co1_co2_w1.sav"), setclass = "tbl_df")
 
-view_df(d) # it is not showing each value label separate. Values appear as range, but I believe that when I created the new dataset using haven export. 
+view_df(d) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
 ```
 
 
@@ -36,21 +36,72 @@ view_df(d) # it is not showing each value label separate. Values appear as range
 ```{r include=FALSE}
 
 # vector with missing values in dataset
-missing_vals <- c(77, 98, 99)
+missing_vals <- c(77, 99)
 
 # function that returns true if values in vector are equal to missing_vals. The function takes a vector x, and specified values of missing data
-recode_missing <- function(x, missing_vals = c(77, 98, 99)) {
+recode_missing <- function(x, missing_vals = c(77, 99)) {
   test <- x %in% missing_vals
   ifelse(test, NA, x)
 }
 
 # function that recodes missing values to NA. The function takes a dataframe with variables with missing data, and specified values of missing data
-recode_missing_df <- function(df, missing_vals = c(77, 98, 99)) {
+recode_missing_df <- function(df, missing_vals = c(77, 99)) {
   modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
 }
 
 d1 <- recode_missing_df(d) # the function strips out variable labels
 ```
+
+
+
+female caregivers = 1057
+male caregivers = 163
+99 = 4 
+NA = 1 
+total = 1225
+
+intro001_1:
+1, Soy su madre = 920
+2, Soy su padre = 131
+3, Otra relación = 169
+
+demo001_1:
+1, Femenino
+2, Masculino
+99, Prefiero no responder	
+
+Sleuthing:
+99 = co1: 835 (tia), co2: 2122 (dad), 2542 (?), 2824(mom) = 2 female, 1 male, 1 ?
+NA = co1: 438 (mom) = 1 female
+
+Conclusions of my sleuthing: 
+female caregivers = 1060
+male caregivers = 164
+1 row with 99, id 2542 (?)
+total = 1225
+
+```{r}
+par_w1
+view_df(par_w1)
+
+par_w1 %>%
+  	count(demo001_1)
+
+# to identify who are the 99
+par_w1 %>%
+  	filter(demo001_1 == 99)
+
+# to identify who is the na
+par_w1 %>% filter(is.na(demo001_1))
+
+par_w1 %>% filter(record_id == "835") 
+par_w1 %>% filter(record_id == "2122") 
+par_w1 %>% filter(record_id == "2542") # lots of prefer not to respond
+par_w1 %>% filter(record_id == "2824") 
+par_w1 %>% filter(record_id == "438") # lots of prefer not to respond
+
+```
+
 
 ### Data prep: reverse scoring negatively worded items
 
@@ -82,4 +133,3 @@ d1$pafas019_1
 d2$pafas019_1
 # Conclusion: it worked
 ```
-

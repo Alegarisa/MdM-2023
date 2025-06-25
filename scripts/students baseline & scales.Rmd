@@ -1,0 +1,356 @@
+---
+title: "students baseline & scales"
+author: "Alejandra Garcia Isaza"
+date: "2025-06-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(rio)
+library(here)
+library(tidyverse)
+library(haven)
+library(janitor)
+library(knitr)
+library(surveytoolbox)
+library(sjPlot)
+library(kableExtra)
+library(psych)
+library(sjmisc)
+
+theme_set(theme_minimal())
+```
+
+
+### Loading the dataset (cohort 1 and 2 - wave 1)
+```{r}
+d <- import(here("data", "students_co1_co2_w1.sav"), setclass = "tbl_df")
+
+view_df(d) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
+```
+
+
+### recoding missing variables as N/A
+```{r include=FALSE}
+
+# vector with missing values in dataset
+missing_vals <- c(77, 99)
+
+# function that returns true if values in vector are equal to missing_vals. The function takes a vector x, and specified values of missing data
+recode_missing <- function(x, missing_vals = c(77, 99)) {
+  test <- x %in% missing_vals
+  ifelse(test, NA, x)
+}
+
+# function that recodes missing values to NA. The function takes a dataframe with variables with missing data, and specified values of missing data
+recode_missing_df <- function(df, missing_vals = c(77, 99)) {
+  modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
+}
+
+d1 <- recode_missing_df(d) # the function strips out variable labels
+```
+
+### demo variables
+```{r}
+# age
+mean(d1$demo001, na.rm = TRUE)
+sd(d1$demo001, na.rm = TRUE)
+
+# gender
+# 1 = girl = 602
+# 2 = boy = 611
+d1 %>%
+  count(demo002) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# grade
+d1 %>%
+  count(demo003) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# number of people they live with
+mean(d1$demo004, na.rm = TRUE)
+sd(d1$demo004, na.rm = TRUE)
+
+d1 %>%
+  filter(demo004 >= 7) %>%
+  nrow()
+
+# have a paid job
+d1 %>%
+  count(demo006) %>%
+  mutate(percent = n / sum(n) * 100) # 12% (141)
+
+d1 %>%
+  filter(demo006input_a >= 10) %>%
+  nrow() # 28 work 10 or more hours
+
+# like school
+d1 %>%
+  count(school001) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# i think i'll finish high school 1 = not true; 2 = somewhat true; 3 = very true
+d1 %>%
+  count(hope004) %>%
+  mutate(percent = n / sum(n) * 100) 
+```
+
+
+### Data prep: reverse scoring negatively worded items
+
+SDQ values = 1, 2, 3
+```{r}
+d2 <- d1 %>%
+  mutate(sdq007 = likert_reverse(sdq007, top = 3, bottom = 1),
+         sdq011 = likert_reverse(sdq011, top = 3, bottom = 1),
+         sdq014 = likert_reverse(sdq014, top = 3, bottom = 1),
+         sdq021 = likert_reverse(sdq021, top = 3, bottom = 1),
+         sdq025 = likert_reverse(sdq025, top = 3, bottom = 1))
+```
+
+
+### checking reverse scoring
+```{r}
+# d1$sdq007
+# d2$sdq007
+# Conclusion: it worked
+```
+
+
+### SDQ scales
+emotional difficulties: sdq003, sdq008, sdq013, sdq016, sdq024 -> higher, worse emotional problems
+conduct difficulties: sdq005, sdq007 (R), sdq012, sdq018, sdq022 -> higher, worse conduct problems
+Hyperactivity scale: sdq002, sdq010, sdq015, sdq021 (R), sdq025 (R) -> higher, worse hyperactivity
+Peer difficulties scale: sdq006, sdq011 (R), sdq014 (R), sdq019, sdq023 -> higher, worse peer diff
+Prosocial scale: sdq001, sdq004, sdq009, sdq017, sdq020 -> higher, better prosociality
+
+```{r}
+emo_diff <- d2 %>%
+  select(sdq003, sdq008, sdq013, sdq016, sdq024) 
+alpha(emo_diff) # 0.62
+
+cond_diff <- d2 %>%
+  select(sdq005, sdq007, sdq012, sdq018, sdq022) 
+alpha(cond_diff) # 0.49
+
+hyper_diff <- d2 %>%
+  select(sdq002, sdq010, sdq015, sdq021, sdq025) 
+alpha(hyper_diff) # 0.57
+
+peer_diff <- d2 %>%
+  select(sdq006, sdq011, sdq014, sdq019, sdq023) 
+alpha(peer_diff) # 0.35
+
+prosocial <- d2 %>%
+  select(sdq001, sdq004, sdq009, sdq017, sdq020) 
+alpha(prosocial) # 0.52
+```
+
+### SDQ alternative scales
+```{r}
+externalizing <- d2 %>%
+  select(sdq005, sdq007, sdq012, sdq022, sdq002, sdq010, sdq015) # enoja, no obedece, pelea, roba, inquieto, se mueve, distractible
+alpha(externalizing) # 0.64
+
+internalizing <- d2 %>%
+  select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq019, sdq023) # dolores, preocupado, triste, nervioso, miedos, bullying, prefiere estar con adultos
+alpha(internalizing) # 0.64
+```
+### hope scale
+```{r}
+hope <- d2 %>%
+  select(hope001, hope002, hope003, hope004, hope005) 
+alpha(hope) # 0.51
+
+# cat(paste(d2$hope006, collapse = "\n"))
+```
+
+
+
+### code for creating scales
+```{r}
+student_scales <- d2 %>%
+  rowwise() %>%
+  mutate(sdq_ext = mean(c(sdq005, sdq007, sdq012, sdq022, sdq002, sdq010, sdq015), na.rm = TRUE),
+         sdq_int = mean(c(sdq003, sdq008, sdq013, sdq016, sdq024, sdq019, sdq023), na.rm = TRUE))
+```
+
+
+```{r}
+ggplot(student_scales, aes(x = sdq_ext)) + 
+  geom_histogram(bins = 30, fill = "cornflowerblue", color = "black", alpha = 0.7) + 
+  facet_wrap(~ demo002, scales = "free") +  # One plot per variable
+  theme_minimal() + 
+  labs(title = "externalizing behavior")
+```
+
+
+```{r}
+custom_labels <- c("1" = "Girls", "2" = "Boys")
+
+ggplot(student_scales, aes(x = sdq_ext)) + 
+  geom_histogram(bins = 20, fill = "cornflowerblue", color = "black", alpha = 0.7) + 
+  facet_wrap(~ demo002, scales = "free", 
+             labeller = labeller(demo002 = custom_labels)) +
+  theme_minimal() + 
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+    strip.text = element_text(size = 12, face = "italic")
+  ) +
+  labs(
+    title = "Externalizing Behavior by Gender"
+  )
+
+###
+custom_labels <- c("1" = "Girls", "2" = "Boys")
+
+ggplot(student_scales, aes(x = sdq_int)) + 
+  geom_histogram(bins = 20, fill = "cornflowerblue", color = "black", alpha = 0.7) + 
+  facet_wrap(~ demo002, scales = "free", 
+             labeller = labeller(demo002 = custom_labels)) +
+  theme_minimal() + 
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+    strip.text = element_text(size = 12, face = "italic")
+  ) +
+  labs(
+    title = "Internalizing Behavior by Gender"
+  )
+```
+
+```{r}
+student_scales %>%
+  group_by(demo002) %>%
+  summarise(
+    mean_sdq_ext = mean(sdq_ext, na.rm = TRUE),
+    sd_sdq_ext = sd(sdq_ext, na.rm = TRUE),
+    n = n()
+  )
+
+student_scales %>%
+  group_by(demo002) %>%
+  summarise(
+    mean_sdq_int = mean(sdq_int, na.rm = TRUE),
+    sd_sdq_int = sd(sdq_int, na.rm = TRUE),
+    n = n()
+  )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########### EFA for funsies ###########
+
+all 25 items
+sdq <- d2 %>%
+  select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq007, sdq012, sdq018, sdq022, sdq002, sdq010, sdq015, sdq021, sdq025, sdq006, sdq011, sdq014, sdq019, sdq023, sdq001, sdq004, sdq009, sdq017, sdq020)
+  
+Removing prosocial scale:
+
+sdq <- d2 %>%
+  select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq007, sdq012, sdq018, sdq022, sdq002, sdq010, sdq015, sdq021, sdq025, sdq006, sdq011, sdq014, sdq019, sdq023)
+  
+### attempt 1
+  
+## The scale to factor analyze
+```{r}
+sdq <- d2 %>%
+  select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq012, sdq022, sdq002, sdq010, sdq015, sdq011, sdq014)
+```
+
+## kmo Kaiser-Meyer-Olkin factor sampling adequacy (above 0.5, closer 1 is best)
+```{r}
+KMO(sdq) # 0.75 --> ok
+```
+
+```{r}
+poly_corr <- polychoric(sdq)$rho
+cortest.bartlett(poly_corr, n = nrow(sdq))
+```
+## Poly corr matrix
+```{r}
+poly <- polychoric(sdq)
+cor.plot(poly$rho, numbers = T, upper = F, main = "Polychoric", show.legend = F)
+```
+
+## scree plot
+```{r}
+scree(sdq, factors = TRUE, pc = FALSE, main = "Scree plot", hline = NULL, add = FALSE)
+# Scree plot shows 3 factor solution, but 1 eigenvalue would be less than 1.0
+```
+
+## EFA using ULS 3 factor
+```{r}
+factor_test_uls <- fa(sdq, n.obs = 95, rotate = "oblimin", fm = "uls", cor = "poly", nfactors = 3) 
+factor_test_uls
+```
+
+
+```{r}
+externalizing <- d2 %>%
+  select(sdq005, sdq012, sdq022, sdq002, sdq010, sdq015) 
+alpha(externalizing) # 0.62
+
+internalizing <- d2 %>%
+  select(sdq003, sdq008, sdq013, sdq016, sdq024) 
+alpha(internalizing) # 0.62
+```
+
+### attempt 2
+
+## The scale to factor analyze
+```{r}
+sdq <- d2 %>%
+  select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq007, sdq012, sdq022, sdq002, sdq010, sdq015,  sdq011, sdq014, sdq019, sdq023)
+```
+
+## kmo Kaiser-Meyer-Olkin factor sampling adequacy (above 0.5, closer 1 is best)
+```{r}
+KMO(sdq) # 0.81 --> ok
+```
+
+```{r}
+poly_corr <- polychoric(sdq)$rho
+cortest.bartlett(poly_corr, n = nrow(sdq))
+```
+## Poly corr matrix
+```{r}
+poly <- polychoric(sdq)
+cor.plot(poly$rho, numbers = T, upper = F, main = "Polychoric", show.legend = F)
+```
+
+## scree plot
+```{r}
+scree(sdq, factors = TRUE, pc = FALSE, main = "Scree plot", hline = NULL, add = FALSE)
+# Scree plot shows 3 factor solution, but 1 eigenvalue would be less than 1.0
+```
+
+## EFA using ULS 3 factor
+```{r}
+factor_test_uls <- fa(sdq, n.obs = 95, rotate = "oblimin", fm = "uls", cor = "poly", nfactors = 3) 
+factor_test_uls
+```
+
+removed:
+18 acusado de mentir
+21 piensa antes
+25 termina lo q
+6 prefiere solo
+
+just 2 items in one factor
+sdq011 al menos 1 amigo
+sdq014 cae bien
