@@ -29,7 +29,7 @@ theme_set(theme_minimal())
 
 379 Rows. 
 
-Before 06/04/25, 9 rows with no identifiers. I asked JAA to re_uploaded the data with all identifiers, and he did on 06/05/25. Today is 06/17/25 and I confirmed that all rows have identifiers. Although I am habing issues using import and here. Using foreign does work. 
+Before 06/04/25, 9 rows with no identifiers. I asked JAA to re_uploaded the data with all identifiers, and he did on 06/05/25. Today is 06/17/25 and I confirmed that all rows have identifiers. 
 
 ### Loading the dataset (cohort 1 - wave 1)
 ```{r}
@@ -73,11 +73,7 @@ view_df(par_w1c2) # this shows values and value labels and prefer not to respond
 
 ## Merging parent cohort 1 and 2 (this is only wave 1)
 
-1225 rows, 11 with no identifiers.  
-
-Two ids for a 2701
-2701.1
-2701.2
+1225 rows.
 
 ```{r}
 par_w1 <- full_join(par_w1c1, par_w1c2) %>% 
@@ -91,13 +87,10 @@ view_df(par_w1) # this shows values and value labels and prefer not to respond i
 ```
 
 ```{r}
-par_w1 %>%
-  haven::write_sav(here("data", "caregivers_co1_co2_w1.sav"))
+# par_w1 %>%
+#   haven::write_sav(here("data", "caregivers_co1_co2_w1.sav")) # haven probably strips out value labels
 ```
 
-
-0202_1
-0202_2
 
 #######################################################################################
 STUDENTS
@@ -105,11 +98,13 @@ STUDENTS
 
 ## WAVE 1 - COHORT 1
 
-373 Rows. 2 rows with no identifiers. 
+373 Rows.
+
+Before 06/04/25, 2 rows with no identifiers. I asked JAA to re_uploaded the data with all identifiers, and he did on 06/05/25. Today is 06/25/25 and I confirmed that all rows have identifiers. 
 
 ### Loading the student dataset (cohort 1 - wave 1)
 ```{r}
-raw_stu_w1c1 <- import(here("nopublish", "01. SPSS Students Assessment 1 Cohort 1.ESP.sav"), setclass = "tbl_df")
+raw_stu_w1c1 <- import(here("nopublish", "students_assessment_1_co1.sav"), setclass = "tbl_df")
 
 stu_w1c1 <- raw_stu_w1c1 %>% 
   select(-2:-4) %>% # selecting out columns with non-relevant data
@@ -120,7 +115,7 @@ stu_w1c1 <- raw_stu_w1c1 %>%
 
 data.frame(table(stu_w1c1$record_id)) # no duplicated ids
 
-sum(is.na(stu_w1c1$record_id)) # 2 rows don't have an identifier 
+sum(is.na(stu_w1c1$record_id)) # all rows have an identifier 
 ```
 
 ## WAVE 1 - COHORT 2
@@ -129,7 +124,7 @@ sum(is.na(stu_w1c1$record_id)) # 2 rows don't have an identifier
 
 ### Loading the student dataset (cohort 2 - wave 1)
 ```{r}
-raw_stu_w1c2 <- import(here("nopublish", "01. Students Assessment 1 Cohorte 2.sav"), setclass = "tbl_df")
+raw_stu_w1c2 <- import(here("nopublish", "students_assessment_1_co2.sav"), setclass = "tbl_df")
 
 stu_w1c2 <- raw_stu_w1c2 %>% 
   select(-2:-4) %>% # selecting out columns with non-relevant data
@@ -146,7 +141,7 @@ sum(is.na(stu_w1c2$record_id)) # all rows with identifier
 
 ## Merging student cohort 1 and 2 (this is only wave 1)
 
-1213 rows, 2 with no identifiers.  
+1213 rows.  
 
 ```{r}
 stu_w1 <- full_join(stu_w1c1, stu_w1c2) %>% 
@@ -154,26 +149,15 @@ stu_w1 <- full_join(stu_w1c1, stu_w1c2) %>%
 
 data.frame(table(stu_w1$record_id)) # no duplicated ids
 
-sum(is.na(stu_w1$record_id)) # 2 rows don't have an identifier 
+sum(is.na(stu_w1$record_id)) # all rows have an identifier 
+
+view_df(stu_w1) # this shows values and value labels and prefer not to respond is 99, no aplica 77
 ```
 
-```{r}
-view_df(stu_w1)
-```
-
-### 06.04.25: with JAA identified that:
-
-1038_a = 9 años, niño en cuarto grado cambiar a 1038.1
-1038_b = 11 años, niña en quinto grado cambiar a 1038.1
 
 ```{r}
-which(is.na(stu_w1$record_id)) # gives the rows
-  
-stu_w1$record_id[1212] <- "1038.1"
-stu_w1$record_id[1213] <- "1038.2"
-
-stu_w1 <- stu_w1 %>%
-  arrange(record_id)
+# stu_w1 %>%
+#   haven::write_sav(here("data", "students_co1_co2_w1.sav"))
 ```
 
 
@@ -199,6 +183,8 @@ edu_w1c1 <- raw_edu_w1c1 %>%
 data.frame(table(edu_w1c1$record_id)) # no duplicated ids
 
 sum(is.na(edu_w1c1$record_id)) # all rows with an identifier 
+
+view_df(edu_w1c1) # this appears to be a glithchy file. In SPSS I confirmed issues in value labels and tsri scale. This appears to be only in the viewer, not the values.
 ```
 
 ## WAVE 1 - COHORT 2
@@ -219,6 +205,8 @@ edu_w1c2 <- raw_edu_w1c2 %>%
 data.frame(table(edu_w1c2$record_id)) # no duplicated ids
 
 sum(is.na(edu_w1c2$record_id)) # all rows with an identifier  
+
+view_df(edu_w1c2) # looks normal; tsri scale looks ok. 
 ```
 
 ## Merging educator cohort 1 and 2 (this is only wave 1)
@@ -232,10 +220,13 @@ edu_w1 <- full_join(edu_w1c1, edu_w1c2) %>%
 data.frame(table(edu_w1$record_id)) # no duplicated ids
 
 sum(is.na(edu_w1$record_id)) # all rows with an identifier 
+
+view_df(edu_w1) # this shows values and value labels and prefer not to respond is 99 and no aplica is 77 and 88 
 ```
 
 ```{r}
-view_df(edu_w1)
+# edu_w1 %>%
+#   haven::write_sav(here("data", "educators_co1_co2_w1.sav"))
 ```
 
 
@@ -294,10 +285,13 @@ pri_w1 <- full_join(pri_w1c1, pri_w1c2) %>%
 data.frame(table(pri_w1$record_id)) # no duplicated ids
 
 sum(is.na(pri_w1$record_id)) # all rows with an identifier  
+
+view_df(pri_w1) # this shows values and value labels and prefer not to respond is 99
 ```
 
 ```{r}
-view_df(pri_w1)
+# pri_w1 %>%
+#   haven::write_sav(here("data", "principals_co1_co2_w1.sav"))
 ```
 
 # Full datasets for all participant-types
@@ -351,6 +345,7 @@ par_w1 %>% filter(record_id == "2824")
 par_w1 %>% filter(record_id == "438") # lots of prefer not to respond
 
 ```
+
 ### students
 
 girls = 602
