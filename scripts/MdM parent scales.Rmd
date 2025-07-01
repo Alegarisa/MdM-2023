@@ -53,53 +53,92 @@ d1 <- recode_missing_df(d) # the function strips out variable labels
 ```
 
 
-
-female caregivers = 1057
-male caregivers = 163
-99 = 4 
-NA = 1 
-total = 1225
-
-intro001_1:
-1, Soy su madre = 920
-2, Soy su padre = 131
-3, Otra relación = 169
-
 demo001_1:
-1, Femenino
-2, Masculino
-99, Prefiero no responder	
-
-Sleuthing:
-99 = co1: 835 (tia), co2: 2122 (dad), 2542 (?), 2824(mom) = 2 female, 1 male, 1 ?
-NA = co1: 438 (mom) = 1 female
+1, Femenino = 1057
+2, Masculino = 163
+99/NA, Prefiero no responder	= 5 
+total = 1225
 
 Conclusions of my sleuthing: 
 female caregivers = 1060
 male caregivers = 164
-1 row with 99, id 2542 (?)
+1 row with na, id 2542 (?)
 total = 1225
 
 ```{r}
-par_w1
-view_df(par_w1)
+# age
+mean(d1$demo002_1, na.rm = TRUE)
+sd(d1$demo002_1, na.rm = TRUE)
 
-par_w1 %>%
+# gender
+d1 %>%
   	count(demo001_1)
 
-# to identify who are the 99
-par_w1 %>%
-  	filter(demo001_1 == 99)
-
 # to identify who is the na
-par_w1 %>% filter(is.na(demo001_1))
+d1 %>% filter(is.na(demo001_1))
 
-par_w1 %>% filter(record_id == "835") 
-par_w1 %>% filter(record_id == "2122") 
-par_w1 %>% filter(record_id == "2542") # lots of prefer not to respond
-par_w1 %>% filter(record_id == "2824") 
-par_w1 %>% filter(record_id == "438") # lots of prefer not to respond
+# Sleuthing:
+d1 %>% filter(record_id == "438") # madre -- lots of prefer not to respond
+d1 %>% filter(record_id == "835") # tia
+d1 %>% filter(record_id == "2122") # padre
+d1 %>% filter(record_id == "2542") # na -- lots of prefer not to respond
+d1 %>% filter(record_id == "2824") # madre
 
+# affiliation with child
+d1 %>%
+  count(intro001_1) %>%
+  mutate(percent = n / sum(n) * 100)
+#cat(paste(d1$intro001input_a_1, collapse = "\n"))
+
+# Ed level
+d1 %>%
+  count(demo004_1) %>%
+  mutate(percent = n / sum(n) * 100)
+
+#have a job
+d1 %>%
+  count(demo005_1) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# hours of work
+d1 %>%
+  filter(demo005input_b_1 == "0")
+# id 2330 has a value of 8000, which I am excluding
+# id 1509	has a value of 0, bec she is retired
+
+mean(d1$demo005input_b_1[!d1$demo005input_b_1 %in% c(0, 8000)], na.rm = TRUE)
+sd(d1$demo005input_b_1[!d1$demo005input_b_1 %in% c(0, 8000)], na.rm = TRUE)
+range(d1$demo005input_b_1[!d1$demo005input_b_1 %in% c(0, 8000)], na.rm = TRUE)
+
+# income enough?
+d1 %>%
+  count(demo007_1) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# food insecurity
+d1 %>%
+  count(demo008_1) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# previous caregiver now abroad
+d1 %>%
+  count(demo018_1) %>%
+  mutate(percent = n / sum(n) * 100) # ~10%
+
+# hours per day w/child on a weekday
+d1 %>%
+  count(demo023_1) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# estado civil
+d1 %>%
+  count(demo003_1) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# primary caregiver
+d1 %>%
+  count(demo021_1) %>%
+  mutate(percent = n / sum(n) * 100)
 ```
 
 
@@ -125,11 +164,11 @@ d2 <- d1 %>%
 
 ### checking reverse scoring
 ```{r}
-d1$sdq007_1
-d2$sdq007_1
+# d1$sdq007_1
+# d2$sdq007_1
 # Conclusion: it worked
 
-d1$pafas019_1
-d2$pafas019_1
+# d1$pafas019_1
+# d2$pafas019_1
 # Conclusion: it worked
 ```
