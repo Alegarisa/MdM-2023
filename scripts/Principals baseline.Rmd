@@ -1,0 +1,89 @@
+---
+title: "Principals baseline"
+author: "Alejandra Garcia Isaza"
+date: "2025-07-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(rio)
+library(here)
+library(tidyverse)
+library(haven)
+library(janitor)
+library(knitr)
+library(surveytoolbox)
+library(sjPlot)
+library(kableExtra)
+library(psych)
+library(sjmisc)
+
+theme_set(theme_minimal())
+```
+
+
+### Loading the dataset (cohort 1 and 2 - wave 1)
+```{r}
+d <- import(here("data", "principals_co1_co2_w1.sav"), setclass = "tbl_df") # 30 principals
+
+view_df(d) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
+```
+
+### recoding missing variables as N/A
+```{r include=FALSE}
+
+# vector with missing values in dataset
+missing_vals <- c(77, 88, 99)
+
+# function that returns true if values in vector are equal to missing_vals. The function takes a vector x, and specified values of missing data
+recode_missing <- function(x, missing_vals = c(77, 88, 99)) {
+  test <- x %in% missing_vals
+  ifelse(test, NA, x)
+}
+
+# function that recodes missing values to NA. The function takes a dataframe with variables with missing data, and specified values of missing data
+recode_missing_df <- function(df, missing_vals = c(77, 88, 99)) {
+  modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
+}
+
+d1 <- recode_missing_df(d) # the function strips out variable labels
+```
+
+### this code is for parents, but copied here to see what works for educators, too
+```{r}
+# age
+mean(d1$demo002_4, na.rm = TRUE)
+sd(d1$demo002_4, na.rm = TRUE)
+
+# gender
+d1 %>%
+  	count(demo001_4) %>%
+    mutate(percent = n / sum(n) * 100) # ~ 19 W; 11 M
+
+# uban/rural
+d1 %>%
+  	count(item013_4) %>%
+    mutate(percent = n / sum(n) * 100) # ~ 93% urban; 3% rural
+
+# number of students in school
+mean(d1$item001_4[!d1$item001_4 %in% c(69)], na.rm = TRUE) #
+sd(d1$item001_4[!d1$item001_4 %in% c(69)], na.rm = TRUE)
+range(d1$item001_4[!d1$item001_4 %in% c(69)], na.rm = TRUE) # range 69 - 1050
+
+d1 %>%
+  filter(item001_4 == "69") # seems too low for a primary school with grades 1-6. 
+
+d1 %>% filter(item013_4 == "3") # checking if one of the 2 rural schools is the one with 69 students total. R/: No
+
+
+# number of teachers in school
+mean(d1$item011_4, na.rm = TRUE) #
+sd(d1$item011_4, na.rm = TRUE)
+range(d1$item011_4, na.rm = TRUE)
+
+
+
+
+```

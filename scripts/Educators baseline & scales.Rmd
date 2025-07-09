@@ -26,7 +26,7 @@ theme_set(theme_minimal())
 
 ### Loading the dataset (cohort 1 and 2 - wave 1)
 ```{r}
-d <- import(here("data", "educators_co1_co2_w1.sav"), setclass = "tbl_df")
+d <- import(here("data", "educators_co1_co2_w1.sav"), setclass = "tbl_df") # 375 teachers
 
 view_df(d) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
 ```
@@ -61,7 +61,8 @@ sd(d1$demo002_3, na.rm = TRUE)
 
 # gender
 d1 %>%
-  	count(demo001_3)
+  	count(demo001_3) %>%
+    mutate(percent = n / sum(n) * 100)
 
 # to identify who is the na
 d1 %>% filter(is.na(demo001_3))
@@ -81,17 +82,18 @@ d1 %>%
   count(experien002_3) %>%
   mutate(percent = n / sum(n) * 100)
 
-# how many school you work in
+# how many schools you work in
 d1 %>%
   count(intro002_3) %>%
   mutate(percent = n / sum(n) * 100)
 
-# hours of work
+# number of students
 d1 %>%
   filter(studinfo001_3 == "980")
 # ids 833, 1793, 2185, 2484 have a value of 0, which I am excluding
 # id 2087	has a value of 980, which I am excluding
 # id 2284 has a value of 1202, which I am excluding
+# many other ids have very large numbers > 80
 
 mean(d1$studinfo001_3[!d1$studinfo001_3 %in% c(0, 980, 1202)], na.rm = TRUE)
 sd(d1$studinfo001_3[!d1$studinfo001_3 %in% c(0, 980, 1202)], na.rm = TRUE)
@@ -116,6 +118,13 @@ d1 %>%
 d1 %>%
   count(demo003_3) %>%
   mutate(percent = n / sum(n) * 100)
+
+# teachers with 0 children and descriptives of # of children
+d1 %>% filter(demo004_3 == "0") # ~ 15%
+range(d1$demo004_3[!d1$demo004_3 %in% c(31)], na.rm = TRUE)
+mean(d1$demo004_3[!d1$demo004_3 %in% c(31)], na.rm = TRUE)
+sd(d1$demo004_3[!d1$demo004_3 %in% c(31)], na.rm = TRUE)
+
 
 # primary caregiver
 d %>%
