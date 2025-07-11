@@ -99,6 +99,9 @@ mean(d1$studinfo001_3[!d1$studinfo001_3 %in% c(0, 980, 1202)], na.rm = TRUE)
 sd(d1$studinfo001_3[!d1$studinfo001_3 %in% c(0, 980, 1202)], na.rm = TRUE)
 range(d1$studinfo001_3[!d1$studinfo001_3 %in% c(0, 52, 54, 58, 89, 98, 100, 102, 112, 150, 199, 200, 250, 300, 320, 380, 400, 420, 980, 1202)], na.rm = TRUE) # range 1-45
 
+range(d1$studinfo001_3[d1$cohort == 1], na.rm = TRUE)
+range(d1$studinfo001_3[d1$cohort == 2], na.rm = TRUE)
+
 # income enough?
 d1 %>%
   count(demo011_3) %>%
@@ -136,3 +139,34 @@ d %>%
   count(demo009_3) %>%
   mutate(percent = n / sum(n) * 100)
 ```
+
+
+```{r}
+range(d1$studinfo001_3[d1$cohort == "1"], na.rm = TRUE)
+range(d1$studinfo001_3[d1$cohort == "2"], na.rm = TRUE)
+
+d1 %>%
+  filter(cohort == "1") %>%
+  summarise(
+    min_value = min(studinfo001_3, na.rm = TRUE),
+    max_value = max(studinfo001_3, na.rm = TRUE)
+  )
+
+d1 %>%
+  filter(cohort == "2") %>%
+  summarise(
+    min_value = min(studinfo001_3, na.rm = TRUE),
+    max_value = max(studinfo001_3, na.rm = TRUE)
+  )
+
+d1 %>%
+  filter(studinfo001_3 > 40) 
+
+d1 %>%
+  filter(intro001_3_77 == 1) 
+
+d1 %>%
+  filter(intro001_3_99 == 1) 
+	
+```
+

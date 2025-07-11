@@ -142,6 +142,41 @@ d1 %>%
 ```
 
 
+```{r}
+# Step 1: Recode values with labels
+dw1 <- d1 %>%
+  mutate(demo007_1_label = case_when(
+    demo007_1 == 1 ~ "Yes, and we can save from it",
+    demo007_1 == 2 ~ "Yes, just enough",
+    demo007_1 == 3 ~ "No, we are stretched",
+    demo007_1 == 4 ~ "No, we are struggling",
+    TRUE ~ "Missing/Other"
+  ))
+
+# Step 2: Count and calculate percentages
+demo_counts <- dw1 %>%
+  count(demo007_1_label) %>%
+  mutate(percent = round(100 * n / sum(n), 1),
+         label = paste0(demo007_1_label, " (", percent, "%)"))
+
+# Step 3: Create pie chart with percentages
+ggplot(demo_counts, aes(x = "", y = n, fill = demo007_1_label)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = paste0(percent, "%")),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 4.5) +
+  theme_void() +
+  labs(title = "Is Family Income Enough?",
+       fill = "Income") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        legend.title = element_text(face = "bold"))
+```
+
+
+
+
+
 ### Data prep: reverse scoring negatively worded items
 
 SDQ values = 0, 1, 2
