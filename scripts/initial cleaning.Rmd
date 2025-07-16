@@ -129,6 +129,7 @@ prosocial_1 = sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1
 (higher scores - lower construct) famrels_1 = pafas019_1* , pafas020_1* , pafas021_1, pafas022_1
 (higher scores - higher construct) teamwork_1 = pafas023_1 , pafas024_1* , pafas025_1
 
+
 ### Data prep: reverse scoring negatively worded items
 ```{r}
 d_w1_clean2 <- d_w1_clean %>%
@@ -188,6 +189,8 @@ d_w1_clean2 %>%
   select(sdq001_1, sdq004_1, sdq009_1, sdq017_1, sdq020_1) %>%
   alpha() # prosocial 0.60
 ```
+
+
 ### internal consistency (alpha scores) # PAFAS SCALES #
 ```{r}
 d_w1_clean2 %>%
@@ -218,6 +221,7 @@ d_w1_clean2 %>%
   select(pafas023_1, pafas024_1, pafas025_1) %>%
   alpha() # teamwork_1 0.54
 ```
+
 
 ### internal consistency (alpha scores) # FAMILY CONSTRUCTS SCALES #
 ```{r}
@@ -262,6 +266,7 @@ d_w1_clean2 %>%
   alpha() # 0.84 emotional expression (chilean validation)
 ```
 
+
 ### internal consistency (alpha scores) # FAMILY-SCHOOL CONSTRUCTS SCALES #
 ```{r}
 # parent involvement
@@ -284,6 +289,7 @@ d_w1_clean2 %>%
 	select(relpar001_1, relpar002_1, relpar003_1, relpar004_1, relpar005_1, relpar006_1) %>% 
   alpha() # relation with other parents at school 0.87
 ```
+
 
 ### internal consistency (alpha scores) #neighborhood/community safety
 ```{r}

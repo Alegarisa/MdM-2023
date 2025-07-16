@@ -26,9 +26,9 @@ theme_set(theme_minimal())
 
 ### Loading the dataset (cohort 1 and 2 - wave 1)
 ```{r}
-d <- import(here("data", "caregivers_co1_co2_w1.sav"), setclass = "tbl_df")
+d_par <- import(here("data", "caregivers_co1_co2_w1.sav"), setclass = "tbl_df")
 
-view_df(d) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
+view_df(d_par) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
 ```
 
 
@@ -49,7 +49,7 @@ recode_missing_df <- function(df, missing_vals = c(77, 99)) {
   modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
 }
 
-d1 <- recode_missing_df(d) # the function strips out variable labels
+d1_par <- recode_missing_df(d_par) # the function strips out variable labels
 ```
 
 
@@ -67,76 +67,76 @@ total = 1225
 
 ```{r}
 # age
-mean(d1$demo002_1, na.rm = TRUE)
-sd(d1$demo002_1, na.rm = TRUE)
+mean(d1_par$demo002_1, na.rm = TRUE)
+sd(d1_par$demo002_1, na.rm = TRUE)
 
 # gender
-d1 %>%
+d1_par %>%
   	count(demo001_1)
 
 # to identify who is the na
-d1 %>% filter(is.na(demo001_1))
+d1_par %>% filter(is.na(demo001_1))
 
 # Sleuthing:
-d1 %>% filter(record_id == "438") # madre -- lots of prefer not to respond
-d1 %>% filter(record_id == "835") # tia
-d1 %>% filter(record_id == "2122") # padre
-d1 %>% filter(record_id == "2542") # na -- lots of prefer not to respond
-d1 %>% filter(record_id == "2824") # madre
+d1_par %>% filter(record_id == "438") # madre -- lots of prefer not to respond
+d1_par %>% filter(record_id == "835") # tia
+d1_par %>% filter(record_id == "2122") # padre
+d1_par %>% filter(record_id == "2542") # na -- lots of prefer not to respond
+d1_par %>% filter(record_id == "2824") # madre
 
 # affiliation with child
-d1 %>%
+d1_par %>%
   count(intro001_1) %>%
   mutate(percent = n / sum(n) * 100)
-#cat(paste(d1$intro001input_a_1, collapse = "\n"))
+#cat(paste(d1_par$intro001input_a_1, collapse = "\n"))
 
 # Ed level
-d1 %>%
+d1_par %>%
   count(demo004_1) %>%
   mutate(percent = n / sum(n) * 100)
 
 #have a job
-d1 %>%
+d1_par %>%
   count(demo005_1) %>%
   mutate(percent = n / sum(n) * 100)
 
 # hours of work
-d1 %>%
+d1_par %>%
   filter(demo005input_b_1 == "0")
 # id 2330 has a value of 8000, which I am excluding
 # id 1509	has a value of 0, bec she is retired
 
-mean(d1$demo005input_b_1[!d1$demo005input_b_1 %in% c(0, 8000)], na.rm = TRUE)
-sd(d1$demo005input_b_1[!d1$demo005input_b_1 %in% c(0, 8000)], na.rm = TRUE)
-range(d1$demo005input_b_1[!d1$demo005input_b_1 %in% c(0, 8000)], na.rm = TRUE)
+mean(d1_par$demo005input_b_1[!d1_par$demo005input_b_1 %in% c(0, 8000)], na.rm = TRUE)
+sd(d1_par$demo005input_b_1[!d1_par$demo005input_b_1 %in% c(0, 8000)], na.rm = TRUE)
+range(d1_par$demo005input_b_1[!d1_par$demo005input_b_1 %in% c(0, 8000)], na.rm = TRUE)
 
 # income enough?
-d1 %>%
+d1_par %>%
   count(demo007_1) %>%
   mutate(percent = n / sum(n) * 100)
 
 # food insecurity
-d1 %>%
+d1_par %>%
   count(demo008_1) %>%
   mutate(percent = n / sum(n) * 100)
 
 # previous caregiver now abroad
-d1 %>%
+d1_par %>%
   count(demo018_1) %>%
   mutate(percent = n / sum(n) * 100) # ~10%
 
 # hours per day w/child on a weekday
-d1 %>%
+d1_par %>%
   count(demo023_1) %>%
   mutate(percent = n / sum(n) * 100)
 
 # estado civil
-d1 %>%
+d1_par %>%
   count(demo003_1) %>%
   mutate(percent = n / sum(n) * 100)
 
 # primary caregiver
-d1 %>%
+d1_par %>%
   count(demo021_1) %>%
   mutate(percent = n / sum(n) * 100)
 ```
@@ -144,7 +144,7 @@ d1 %>%
 
 ```{r}
 # Step 1: Recode values with labels
-dw1 <- d1 %>%
+figs_par <- d1_par %>%
   mutate(demo007_1_label = case_when(
     demo007_1 == 1 ~ "Yes, and we can save from it",
     demo007_1 == 2 ~ "Yes, just enough",
@@ -154,7 +154,7 @@ dw1 <- d1 %>%
   ))
 
 # Step 2: Count and calculate percentages
-demo_counts <- dw1 %>%
+demo_counts <- figs_par %>%
   count(demo007_1_label) %>%
   mutate(percent = round(100 * n / sum(n), 1),
          label = paste0(demo007_1_label, " (", percent, "%)"))
@@ -174,15 +174,12 @@ ggplot(demo_counts, aes(x = "", y = n, fill = demo007_1_label)) +
 ```
 
 
-
-
-
 ### Data prep: reverse scoring negatively worded items
 
 SDQ values = 0, 1, 2
 PAFAS values = 0, 1, 2, 3
 ```{r}
-d2 <- d1 %>%
+d2_par <- d1_par %>%
   mutate(sdq007_1 = likert_reverse(sdq007_1, top = 2, bottom = 0),
          sdq021_1 = likert_reverse(sdq021_1, top = 2, bottom = 0),
          sdq025_1 = likert_reverse(sdq025_1, top = 2, bottom = 0),
@@ -199,11 +196,67 @@ d2 <- d1 %>%
 
 ### checking reverse scoring
 ```{r}
-# d1$sdq007_1
-# d2$sdq007_1
+# d1_par$sdq007_1
+# d2_par$sdq007_1
 # Conclusion: it worked
 
-# d1$pafas019_1
-# d2$pafas019_1
+# d1_par$pafas019_1
+# d2_par$pafas019_1
 # Conclusion: it worked
+```
+
+### PAFAS single items
+```{r}
+d1_par %>%
+  count(pafas009_1) %>%
+  mutate(percent = n / sum(n) * 100)
+```
+
+
+```{r}
+coercive <- d2_par %>%
+  select(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1) 
+alpha(coercive) # 0.72
+
+pcposirel <- d2_par %>%
+  select(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1) 
+alpha(pcposirel) # 0.83
+
+famcom_1 <- d2_par %>%
+  select(comfam001_1, comfam002_1, comfam005_1) 
+alpha(famcom_1) # 0.86
+
+emoexpres_1 <- d2_par %>%
+  select(comfam003_1, comfam004_1, comfam006_1) 
+alpha(emoexpres_1) # 0.82
+```
+
+
+### code for creating scales
+```{r}
+parent_scales <- d2_par %>%
+  rowwise() %>%
+  mutate(posi_rel = mean(c(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1), na.rm = TRUE),
+         coercion = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE))
+```
+
+### Avg. scores
+```{r}
+
+# By parent reported child's gender 1 = girls, 2 boys
+parent_scales %>%
+  group_by(intro002_1) %>%
+  summarise(
+    mean_coercion = mean(coercion, na.rm = TRUE),
+    sd_coerciont = sd(coercion, na.rm = TRUE),
+    n = n()
+  )
+
+parent_scales %>%
+  group_by(intro002_1) %>%
+  summarise(
+    mean_posirel = mean(posi_rel, na.rm = TRUE),
+    sd_posirel = sd(posi_rel, na.rm = TRUE),
+    n = n()
+  )
 ```

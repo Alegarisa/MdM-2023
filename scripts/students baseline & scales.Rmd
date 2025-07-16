@@ -26,9 +26,9 @@ theme_set(theme_minimal())
 
 ### Loading the dataset (cohort 1 and 2 - wave 1)
 ```{r}
-d <- import(here("data", "students_co1_co2_w1.sav"), setclass = "tbl_df")
+d_stu <- import(here("data", "students_co1_co2_w1.sav"), setclass = "tbl_df")
 
-view_df(d) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
+view_df(d_stu) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
 ```
 
 
@@ -49,92 +49,65 @@ recode_missing_df <- function(df, missing_vals = c(77, 99)) {
   modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
 }
 
-d1 <- recode_missing_df(d) # the function strips out variable labels
+d1_stu <- recode_missing_df(d_stu) # the function strips out variable labels
 ```
 
 ### demo variables
 ```{r}
 # age
-mean(d1$demo001, na.rm = TRUE)
-sd(d1$demo001, na.rm = TRUE)
+mean(d1_stu$demo001, na.rm = TRUE)
+sd(d1_stu$demo001, na.rm = TRUE)
 
 # gender
 # 1 = girl = 602
 # 2 = boy = 611
-d1 %>%
+d1_stu %>%
   count(demo002) %>%
   mutate(percent = n / sum(n) * 100)
 
 # grade
-d1 %>%
+d1_stu %>%
   count(demo003) %>%
   mutate(percent = n / sum(n) * 100)
 
 # number of people they live with
-mean(d1$demo004, na.rm = TRUE)
-sd(d1$demo004, na.rm = TRUE)
+mean(d1_stu$demo004, na.rm = TRUE)
+sd(d1_stu$demo004, na.rm = TRUE)
 
-d1 %>%
+d1_stu %>%
   filter(demo004 >= 7) %>%
   nrow()
 
 # have a paid job
-d1 %>%
+d1_stu %>%
   count(demo006) %>%
   mutate(percent = n / sum(n) * 100) # 12% (141)
 
-d1 %>%
+d1_stu %>%
   filter(demo006input_a >= 10) %>%
   nrow() # 28 work 10 or more hours
 
 # like school
-d1 %>%
+d1_stu %>%
   count(school001) %>%
   mutate(percent = n / sum(n) * 100)
 
 # i think i'll finish high school 1 = not true; 2 = somewhat true; 3 = very true
-d1 %>%
+d1_stu %>%
   count(hope004) %>%
   mutate(percent = n / sum(n) * 100) 
-```
 
-
-
-```{r}
-# Step 1: Recode values with labels
-dw1 <- d1 %>%
-  mutate(demo006_label = case_when(
-    demo006 == 0 ~ "No",
-    demo006	 == 1 ~ "Yes",
-    TRUE ~ "Missing/Other"
-  ))
-
-# Step 2: Count and calculate percentages
-demo_counts <- dw1 %>%
-  count(demo006_label) %>%
-  mutate(percent = round(100 * n / sum(n), 1),
-         label = paste0(demo006_label, " (", percent, "%)"))
-
-# Step 3: Create pie chart with percentages
-ggplot(demo_counts, aes(x = "", y = n, fill = demo006_label)) +
-  geom_bar(stat = "identity", width = 1, color = "white") +
-  coord_polar(theta = "y") +
-  geom_text(aes(label = paste0(percent, "%")),
-            position = position_stack(vjust = 0.5),
-            color = "white", size = 4.5) +
-  theme_void() +
-  labs(title = "Percentage of Children with a Paying Job?",
-       fill = "Job?") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
-        legend.title = element_text(face = "bold"))
+# primary caregiver (student report)
+d1_stu %>%
+  count(primcaregiver) %>%
+  mutate(percent = n / sum(n) * 100) # 73% madre (1); 11.30% abuela (5); 6% padre (3); 4.40% tia (7); 4.04% otra persona (9)
 ```
 
 
 ### Data prep: reverse scoring negatively worded items
-
 SDQ values = 1, 2, 3
 ```{r}
-d2 <- d1 %>%
+d2_stu <- d1_stu %>%
   mutate(sdq007 = likert_reverse(sdq007, top = 3, bottom = 1),
          sdq011 = likert_reverse(sdq011, top = 3, bottom = 1),
          sdq014 = likert_reverse(sdq014, top = 3, bottom = 1),
@@ -145,8 +118,8 @@ d2 <- d1 %>%
 
 ### checking reverse scoring
 ```{r}
-# d1$sdq007
-# d2$sdq007
+# d1_stu$sdq007
+# d2_stu$sdq007
 # Conclusion: it worked
 ```
 
@@ -159,28 +132,28 @@ Peer difficulties scale: sdq006, sdq011 (R), sdq014 (R), sdq019, sdq023 -> highe
 Prosocial scale: sdq001, sdq004, sdq009, sdq017, sdq020 -> higher, better prosociality
 
 ```{r}
-emo_diff <- d2 %>%
+emo_diff <- d2_stu %>%
   select(sdq003, sdq008, sdq013, sdq016, sdq024) 
 alpha(emo_diff) # 0.62
 
-cond_diff <- d2 %>%
+cond_diff <- d2_stu %>%
   select(sdq005, sdq007, sdq012, sdq018, sdq022) 
 alpha(cond_diff) # 0.49
 
-hyper_diff <- d2 %>%
+hyper_diff <- d2_stu %>%
   select(sdq002, sdq010, sdq015, sdq021, sdq025) 
 alpha(hyper_diff) # 0.57
 
-peer_diff <- d2 %>%
+peer_diff <- d2_stu %>%
   select(sdq006, sdq011, sdq014, sdq019, sdq023) 
 alpha(peer_diff) # 0.35
 
-prosocial <- d2 %>%
+prosocial <- d2_stu %>%
   select(sdq001, sdq004, sdq009, sdq017, sdq020) 
 alpha(prosocial) # 0.52
 
 
-tot_diff <- d2 %>%
+tot_diff <- d2_stu %>%
   select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq007, sdq012, sdq018, sdq022, sdq002, sdq010, sdq015, sdq021, sdq025, sdq006, sdq011, sdq014, sdq019, sdq023) 
 alpha(tot_diff) # 0.73
 
@@ -188,34 +161,123 @@ alpha(tot_diff) # 0.73
 
 ### SDQ alternative scales
 ```{r}
-externalizing <- d2 %>%
+externalizing <- d2_stu %>%
   select(sdq005, sdq007, sdq012, sdq022, sdq002, sdq010, sdq015) # enoja, no obedece, pelea, roba, inquieto, se mueve, distractible
 alpha(externalizing) # 0.64
 
-internalizing <- d2 %>%
+internalizing <- d2_stu %>%
   select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq019, sdq023) # dolores, preocupado, triste, nervioso, miedos, bullying, prefiere estar con adultos
 alpha(internalizing) # 0.64
 ```
 ### hope scale
 ```{r}
-hope <- d2 %>%
+hope <- d2_stu %>%
   select(hope001, hope002, hope003, hope004, hope005) 
 alpha(hope) # 0.51
 
-# cat(paste(d2$hope006, collapse = "\n"))
+# cat(paste(d2_stu$hope006, collapse = "\n"))
+```
+
+
+### CRPBI scale (Children's report of parent behavior Inventory)
+original inventory: 30 items, 10 items each subscale: a) support; b) psychological control, c) behavioral control
+
+crpbi001 to crpbi10 items are the complete support subscale
+crpbi011 to crpbi17 were part of a surveys used by Erin Rodriguez, but don't really belong to CRPBI. These tap on coercive and punitive parenting.
+```{r}
+
+support <- d2_stu %>%
+  select(crpbi001, crpbi002, crpbi003, crpbi004, crpbi005, crpbi006, crpbi007, crpbi008, crpbi009, crpbi010) 
+alpha(support) # 0.82
+
+neg_coercive <- d2_stu %>%
+  select(crpbi011, crpbi012, crpbi013, crpbi014, crpbi015, crpbi016, crpbi017) 
+alpha(neg_coercive) # 0.75
 ```
 
 
 
 ### code for creating scales
 ```{r}
-student_scales <- d2 %>%
+student_scales <- d2_stu %>%
   rowwise() %>%
   mutate(sdq_ext = mean(c(sdq005, sdq007, sdq012, sdq022, sdq002, sdq010, sdq015), na.rm = TRUE),
-         sdq_int = mean(c(sdq003, sdq008, sdq013, sdq016, sdq024, sdq019, sdq023), na.rm = TRUE))
+         sdq_int = mean(c(sdq003, sdq008, sdq013, sdq016, sdq024, sdq019, sdq023), na.rm = TRUE),
+         support = mean(c(crpbi001, crpbi002, crpbi003, crpbi004, crpbi005, crpbi006, crpbi007, crpbi008, crpbi009, crpbi010), na.rm = TRUE),
+         neg_coercive = mean(c(crpbi011, crpbi012, crpbi013, crpbi014, crpbi015, crpbi016, crpbi017), na.rm = TRUE))
+```
+
+### Average scores gy gender
+1 = girls, 2 = boys
+```{r}
+# SDQ
+student_scales %>%
+  group_by(demo002) %>%
+  summarise(
+    mean_sdq_ext = mean(sdq_ext, na.rm = TRUE),
+    sd_sdq_ext = sd(sdq_ext, na.rm = TRUE),
+    n = n()
+  )
+
+student_scales %>%
+  group_by(demo002) %>%
+  summarise(
+    mean_sdq_int = mean(sdq_int, na.rm = TRUE),
+    sd_sdq_int = sd(sdq_int, na.rm = TRUE),
+    n = n()
+  )
+
+# Support & coercion
+student_scales %>%
+  group_by(demo002) %>%
+  summarise(
+    mean_support = mean(support, na.rm = TRUE),
+    sd_support = sd(support, na.rm = TRUE),
+    n = n()
+  )
+
+student_scales %>%
+  group_by(demo002) %>%
+  summarise(
+    mean_neg_coercive = mean(neg_coercive, na.rm = TRUE),
+    sd_neg_coercive = sd(neg_coercive, na.rm = TRUE),
+    n = n()
+  )
+
 ```
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Figures
 ```{r}
 ggplot(student_scales, aes(x = sdq_ext)) + 
   geom_histogram(bins = 30, fill = "cornflowerblue", color = "black", alpha = 0.7) + 
@@ -258,191 +320,35 @@ ggplot(student_scales, aes(x = sdq_int)) +
   )
 ```
 
-```{r}
-student_scales %>%
-  group_by(demo002) %>%
-  summarise(
-    mean_sdq_ext = mean(sdq_ext, na.rm = TRUE),
-    sd_sdq_ext = sd(sdq_ext, na.rm = TRUE),
-    n = n()
-  )
-
-student_scales %>%
-  group_by(demo002) %>%
-  summarise(
-    mean_sdq_int = mean(sdq_int, na.rm = TRUE),
-    sd_sdq_int = sd(sdq_int, na.rm = TRUE),
-    n = n()
-  )
-```
 
 ```{r}
-library(lavaan)
+# Step 1: Recode values with labels
+figs_stu <- d1_stu %>%
+  mutate(demo006_label = case_when(
+    demo006 == 0 ~ "No",
+    demo006	 == 1 ~ "Yes",
+    TRUE ~ "Missing/Other"
+  ))
+
+# Step 2: Count and calculate percentages
+demo_counts <- figs_stu %>%
+  count(demo006_label) %>%
+  mutate(percent = round(100 * n / sum(n), 1),
+         label = paste0(demo006_label, " (", percent, "%)"))
+
+# Step 3: Create pie chart with percentages
+ggplot(demo_counts, aes(x = "", y = n, fill = demo006_label)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = paste0(percent, "%")),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 4.5) +
+  theme_void() +
+  labs(title = "Percentage of Children with a Paying Job?",
+       fill = "Job?") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        legend.title = element_text(face = "bold"))
 ```
-
-
-emo_diff <- d2 %>%
-  select(sdq003, sdq008, sdq013, sdq016, sdq024) 
-alpha(emo_diff) # 0.62
-
-cond_diff <- d2 %>%
-  select(sdq005, sdq007, sdq012, sdq018, sdq022) 
-alpha(cond_diff) # 0.49
-
-hyper_diff <- d2 %>%
-  select(sdq002, sdq010, sdq015, sdq021, sdq025) 
-alpha(hyper_diff) # 0.57
-
-peer_diff <- d2 %>%
-  select(sdq006, sdq011, sdq014, sdq019, sdq023) 
-alpha(peer_diff) # 0.35
-
-prosocial <- d2 %>%
-  select(sdq001, sdq004, sdq009, sdq017, sdq020) 
-alpha(prosocial) # 0.52
-
-
-tot_diff <- d2 %>%
-  select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, 
-  sdq007, sdq012, sdq018, sdq022, sdq002, sdq010, sdq015, 
-  sdq021, sdq025, sdq006, sdq011, sdq014, sdq019, sdq023) 
-alpha(tot_diff) # 0.73
-
-
-####sdq 1####
-```{r}
-sdq_1 <-("
-#factor structure 
-emo=~ sdq003 + sdq008 + sdq013 + sdq016 + sdq024
-         cond=~ sdq005 + sdq007 + sdq012 + sdq018 + sdq022
-         hyper=~ sdq002 + sdq010 + sdq015 + sdq021 + sdq025
-         peer=~ sdq006 + sdq011 + sdq014 + sdq019 + sdq023
-         pros=~ sdq001 + sdq004 + sdq009 + sdq017 + sdq020
-         
-         #factor covariances
-         emo~~ cond + hyper + peer + pros
-         cond ~~ hyper + peer + pros
-         hyper ~~ peer + pros
-         peer ~~ pros")
-```
-
-
-```{r}
-sdq_1cfa<-cfa(sdq_1, data=d2, estimator="DWLS", ordered = T)
-summary(sdq_1cfa, fit.measures=T, standardized=T, rsquare=T)
-```
-
-ajuste = matriz var cov observada concuerda con the implied matrix chi2 
-
-  P-value (Chi-square)                           0.000 terrible 
-
-  Comparative Fit Index (CFI)                    0.902 trabajable
-  Tucker-Lewis Index (TLI)                       0.890 trabajable
-
-  RMSEA                                          0.046 trabajable
-  
-  SRMR                                           0.071 trabajable
-
-
-
-latwnt variables = cargas factoriales 
-
-peer =~                                                               
-    sdq006            1.000                               0.346    0.346
-    sdq011            0.736    0.108    6.826    0.000    0.254    0.254
-    sdq014            0.901    0.095    9.471    0.000    0.311    0.311
-    sdq019            1.727    0.145   11.917    0.000    0.597    0.597
-    sdq023            0.960    0.096    9.992    0.000    0.332    0.332
-
-
-but not too bad
-
-cov y corr
-cond ~~                                                               
-    hyper              0.848 potencialment multicolineal, pero nada grave (>.95 seria porb)
-
-
-Variances: p significativo == we are ok
-
-R-sqrd == these are too low
-sdq011            0.065
-sdq014        0.097
-
-el problema fundamental es el ajuste.
-
-
-```{r}
-qchisq(0.05, 265, lower.tail=F) # VALOR CRITICO AL TENER 256 GRADOS DE LIBERTAD, SALE EN EL OUTPUT. tENEMOS 934.880 IDEAL SERIA 303 PARA ABAJO
-```
-
-
-####sdq 2####
-```{r}
-sdq_2 <-("
-#factor structure 
-emo=~ sdq003 + sdq008 + sdq013 + sdq016 + sdq024
-         cond=~ sdq005 + sdq007 + sdq012 + sdq018 + sdq022
-         hyper=~ sdq002 + sdq010 + sdq015 + sdq021 + sdq025
-         peer=~ sdq006 + sdq011 + sdq014 + sdq019 + sdq023
-         pros=~ sdq001 + sdq004 + sdq009 + sdq017 + sdq020
-         
-         #factor covariances
-         emo~~ cond + hyper + peer + pros
-         cond ~~ hyper + peer + pros
-         hyper ~~ peer + pros
-         peer ~~ pros
-
-         # Mod indices
-         sdq011 ~~ sdq014
-         sdq002 ~~ sdq010") # tienen algo que el modelo no puede capturar, estamos agregando una cov a los errores de estos items
-```
-
-
-```{r}
-modindices(sdq_1cfa, sort. = T)
-```
-
-chi didn't imprve as much, SRMR tampoco,  pero CFI AND TLI, yes. 
-```{r}
-sdq_2cfa<-cfa(sdq_2, data=d2, estimator="DWLS", ordered = T)
-summary(sdq_2cfa, fit.measures=T, standardized=T, rsquare=T)
-anova(sdq_1cfa, sdq_2cfa) # significant improvement in the fit indexes
-```
-
-
-
-
-1. Goodman = ya
-2. 5 factors con 2 lat segundo nivel
-3. Honduras paper
-4. factores de seg = agarrar emo items + peer items sin segundo orden 
-5. 1 solo factor 
-
-
-
-####sdq 2####
-```{r}
-sdq_2 <-("
-#factor structure 
-emo=~ sdq003 + sdq008 + sdq013 + sdq016 + sdq024
-         cond=~ sdq005 + sdq007 + sdq012 + sdq018 + sdq022
-         hyper=~ sdq002 + sdq010 + sdq015 + sdq021 + sdq025
-         peer=~ sdq006 + sdq011 + sdq014 + sdq019 + sdq023
-         pros=~ sdq001 + sdq004 + sdq009 + sdq017 + sdq020
-         int =~ peer + emo
-         ext =~ cond + hyp
-         
-         #factor covariances
-         emo~~ cond + hyper + peer + pros
-         cond ~~ hyper + peer + pros
-         hyper ~~ peer + pros
-         peer ~~ pros") 
-```
-
-
-
-
-
 
 
 
@@ -483,7 +389,7 @@ emo=~ sdq003 + sdq008 + sdq013 + sdq016 + sdq024
 
 ## The whole scale
 ```{r}
-sdq <- d2 %>%
+sdq <- d2_stu %>%
   select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq007, sdq012, sdq018, sdq022, sdq002, sdq010, sdq015, sdq021, sdq025, sdq006, sdq011, sdq014, sdq019, sdq023, sdq001, sdq004, sdq009, sdq017, sdq020)
 ```
 
@@ -525,7 +431,7 @@ omega(sdq, nfactors = 5, flip = T, plot = T) # alpha = 0.76
 ### Just total difficulties scale
 
 ```{r}
-sdq <- d2 %>%
+sdq <- d2_stu %>%
 select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq007, sdq012, sdq018, sdq022, sdq002, sdq010, sdq015, sdq021, sdq025, sdq006, sdq011, sdq014, sdq019, sdq023) 
 ```
 
@@ -566,17 +472,17 @@ omega(sdq, nfactors = 5, flip = T, plot = T) # alpha = 0.76
   
 ## Just the 
 
-externalizing <- d2 %>%
+externalizing <- d2_stu %>%
   select(sdq005, sdq007, sdq012, sdq022, sdq002, sdq010, sdq015) # enoja, no obedece, pelea, roba, inquieto, se mueve, distractible
 alpha(externalizing) # 0.64
 
-internalizing <- d2 %>%
+internalizing <- d2_stu %>%
   select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq019, sdq023) # dolores, preocupado, triste, nervioso, miedos, bullying, prefiere estar con adultos
 alpha(internalizing) 
 
 
 ```{r}
-sdq <- d2 %>%
+sdq <- d2_stu %>%
   select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq012, sdq022, sdq002, sdq010, sdq015, sdq011, sdq014)
 ```
 
@@ -609,11 +515,11 @@ factor_test_uls
 
 
 ```{r}
-externalizing <- d2 %>%
+externalizing <- d2_stu %>%
   select(sdq005, sdq012, sdq022, sdq002, sdq010, sdq015) 
 alpha(externalizing) # 0.62
 
-internalizing <- d2 %>%
+internalizing <- d2_stu %>%
   select(sdq003, sdq008, sdq013, sdq016, sdq024) 
 alpha(internalizing) # 0.62
 ```
@@ -622,7 +528,7 @@ alpha(internalizing) # 0.62
 
 ## The scale to factor analyze
 ```{r}
-sdq <- d2 %>%
+sdq <- d2_stu %>%
   select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq007, sdq012, sdq022, sdq002, sdq010, sdq015,  sdq011, sdq014, sdq019, sdq023)
 ```
 

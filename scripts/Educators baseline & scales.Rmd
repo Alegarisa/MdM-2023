@@ -26,9 +26,9 @@ theme_set(theme_minimal())
 
 ### Loading the dataset (cohort 1 and 2 - wave 1)
 ```{r}
-d <- import(here("data", "educators_co1_co2_w1.sav"), setclass = "tbl_df") # 375 teachers
+d_edu <- import(here("data", "educators_co1_co2_w1.sav"), setclass = "tbl_df") # 375 teachers
 
-view_df(d) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
+view_df(d_edu) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
 ```
 
 
@@ -49,84 +49,84 @@ recode_missing_df <- function(df, missing_vals = c(77, 88, 99)) {
   modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
 }
 
-d1 <- recode_missing_df(d) # the function strips out variable labels
+d1_edu <- recode_missing_df(d_edu) # the function strips out variable labels
 ```
 
 
 ### this code is for parents, but copied here to see what works for educators, too
 ```{r}
 # age
-mean(d1$demo002_3, na.rm = TRUE)
-sd(d1$demo002_3, na.rm = TRUE)
+mean(d1_edu$demo002_3, na.rm = TRUE)
+sd(d1_edu$demo002_3, na.rm = TRUE)
 
 # gender
-d1 %>%
+d1_edu %>%
   	count(demo001_3) %>%
     mutate(percent = n / sum(n) * 100)
 
 # to identify who is the na
-d1 %>% filter(is.na(demo001_3))
+d1_edu %>% filter(is.na(demo001_3))
 
 # Sleuthing:
-d1 %>% filter(record_id == "1174") # 
-d1 %>% filter(record_id == "1376") # 
-d1 %>% filter(record_id == "2180") # 
+d1_edu %>% filter(record_id == "1174") # 
+d1_edu %>% filter(record_id == "1376") # 
+d1_edu %>% filter(record_id == "2180") # 
 
 # Ed level
-d1 %>%
+d1_edu %>%
   count(experien001_3) %>%
   mutate(percent = n / sum(n) * 100)
 
 # years teaching
-d1 %>%
+d1_edu %>%
   count(experien002_3) %>%
   mutate(percent = n / sum(n) * 100)
 
 # how many schools you work in
-d1 %>%
+d1_edu %>%
   count(intro002_3) %>%
   mutate(percent = n / sum(n) * 100)
 
 # number of students
-d1 %>%
+d1_edu %>%
   filter(studinfo001_3 == "980")
 # ids 833, 1793, 2185, 2484 have a value of 0, which I am excluding
 # id 2087	has a value of 980, which I am excluding
 # id 2284 has a value of 1202, which I am excluding
 # many other ids have very large numbers > 80
 
-mean(d1$studinfo001_3[!d1$studinfo001_3 %in% c(0, 980, 1202)], na.rm = TRUE)
-sd(d1$studinfo001_3[!d1$studinfo001_3 %in% c(0, 980, 1202)], na.rm = TRUE)
-range(d1$studinfo001_3[!d1$studinfo001_3 %in% c(0, 52, 54, 58, 89, 98, 100, 102, 112, 150, 199, 200, 250, 300, 320, 380, 400, 420, 980, 1202)], na.rm = TRUE) # range 1-45
+mean(d1_edu$studinfo001_3[!d1_edu$studinfo001_3 %in% c(0, 980, 1202)], na.rm = TRUE)
+sd(d1_edu$studinfo001_3[!d1_edu$studinfo001_3 %in% c(0, 980, 1202)], na.rm = TRUE)
+range(d1_edu$studinfo001_3[!d1_edu$studinfo001_3 %in% c(0, 52, 54, 58, 89, 98, 100, 102, 112, 150, 199, 200, 250, 300, 320, 380, 400, 420, 980, 1202)], na.rm = TRUE) # range 1-45
 
-range(d1$studinfo001_3[d1$cohort == 1], na.rm = TRUE)
-range(d1$studinfo001_3[d1$cohort == 2], na.rm = TRUE)
+range(d1_edu$studinfo001_3[d1_edu$cohort == 1], na.rm = TRUE)
+range(d1_edu$studinfo001_3[d1_edu$cohort == 2], na.rm = TRUE)
 
 # income enough?
-d1 %>%
+d1_edu %>%
   count(demo011_3) %>%
   mutate(percent = n / sum(n) * 100)
 
 # food insecurity
-d1 %>%
+d1_edu %>%
   count(demo012_3) %>%
   mutate(percent = n / sum(n) * 100)
 
 # parientes now abroad
-d1 %>%
+d1_edu %>%
   count(demo007_3) %>%
   mutate(percent = n / sum(n) * 100) # ~23%
 
 # estado civil
-d1 %>%
+d1_edu %>%
   count(demo003_3) %>%
   mutate(percent = n / sum(n) * 100)
 
 # teachers with 0 children and descriptives of # of children
-d1 %>% filter(demo004_3 == "0") # ~ 15%
-range(d1$demo004_3[!d1$demo004_3 %in% c(31)], na.rm = TRUE)
-mean(d1$demo004_3[!d1$demo004_3 %in% c(31)], na.rm = TRUE)
-sd(d1$demo004_3[!d1$demo004_3 %in% c(31)], na.rm = TRUE)
+d1_edu %>% filter(demo004_3 == "0") # ~ 15%
+range(d1_edu$demo004_3[!d1_edu$demo004_3 %in% c(31)], na.rm = TRUE)
+mean(d1_edu$demo004_3[!d1_edu$demo004_3 %in% c(31)], na.rm = TRUE)
+sd(d1_edu$demo004_3[!d1_edu$demo004_3 %in% c(31)], na.rm = TRUE)
 
 
 # primary caregiver
@@ -142,30 +142,30 @@ d %>%
 
 
 ```{r}
-range(d1$studinfo001_3[d1$cohort == "1"], na.rm = TRUE)
-range(d1$studinfo001_3[d1$cohort == "2"], na.rm = TRUE)
+range(d1_edu$studinfo001_3[d1_edu$cohort == "1"], na.rm = TRUE)
+range(d1_edu$studinfo001_3[d1_edu$cohort == "2"], na.rm = TRUE)
 
-d1 %>%
+d1_edu %>%
   filter(cohort == "1") %>%
   summarise(
     min_value = min(studinfo001_3, na.rm = TRUE),
     max_value = max(studinfo001_3, na.rm = TRUE)
   )
 
-d1 %>%
+d1_edu %>%
   filter(cohort == "2") %>%
   summarise(
     min_value = min(studinfo001_3, na.rm = TRUE),
     max_value = max(studinfo001_3, na.rm = TRUE)
   )
 
-d1 %>%
+d1_edu %>%
   filter(studinfo001_3 > 40) 
 
-d1 %>%
+d1_edu %>%
   filter(intro001_3_77 == 1) 
 
-d1 %>%
+d1_edu %>%
   filter(intro001_3_99 == 1) 
 	
 ```

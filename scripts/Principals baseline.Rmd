@@ -26,9 +26,9 @@ theme_set(theme_minimal())
 
 ### Loading the dataset (cohort 1 and 2 - wave 1)
 ```{r}
-d <- import(here("data", "principals_co1_co2_w1.sav"), setclass = "tbl_df") # 30 principals
+d_pri <- import(here("data", "principals_co1_co2_w1.sav"), setclass = "tbl_df") # 30 principals
 
-view_df(d) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
+view_df(d_pri) # Not showing each value label separate. Values appear as range, prob due to haven stripping labels when I exported. 
 ```
 
 ### recoding missing variables as N/A
@@ -48,42 +48,38 @@ recode_missing_df <- function(df, missing_vals = c(77, 88, 99)) {
   modify(df, ~recode_missing(.x, missing_vals)) # here uses the function created above
 }
 
-d1 <- recode_missing_df(d) # the function strips out variable labels
+d1_pri <- recode_missing_df(d_pri) # the function strips out variable labels
 ```
 
 ### this code is for parents, but copied here to see what works for educators, too
 ```{r}
 # age
-mean(d1$demo002_4, na.rm = TRUE)
-sd(d1$demo002_4, na.rm = TRUE)
+mean(d1_pri$demo002_4, na.rm = TRUE)
+sd(d1_pri$demo002_4, na.rm = TRUE)
 
 # gender
-d1 %>%
+d1_pri %>%
   	count(demo001_4) %>%
     mutate(percent = n / sum(n) * 100) # ~ 19 W; 11 M
 
 # uban/rural
-d1 %>%
+d1_pri %>%
   	count(item013_4) %>%
     mutate(percent = n / sum(n) * 100) # ~ 93% urban; 3% rural
 
 # number of students in school
-mean(d1$item001_4[!d1$item001_4 %in% c(69)], na.rm = TRUE) #
-sd(d1$item001_4[!d1$item001_4 %in% c(69)], na.rm = TRUE)
-range(d1$item001_4[!d1$item001_4 %in% c(69)], na.rm = TRUE) # range 69 - 1050
+mean(d1_pri$item001_4[!d1_pri$item001_4 %in% c(69)], na.rm = TRUE) #
+sd(d1_pri$item001_4[!d1_pri$item001_4 %in% c(69)], na.rm = TRUE)
+range(d1_pri$item001_4[!d1_pri$item001_4 %in% c(69)], na.rm = TRUE) # range 69 - 1050
 
-d1 %>%
+d1_pri %>%
   filter(item001_4 == "69") # seems too low for a primary school with grades 1-6. 
 
-d1 %>% filter(item013_4 == "3") # checking if one of the 2 rural schools is the one with 69 students total. R/: No
+d1_pri %>% filter(item013_4 == "3") # checking if one of the 2 rural schools is the one with 69 students total. R/: No
 
 
 # number of teachers in school
-mean(d1$item011_4, na.rm = TRUE) #
-sd(d1$item011_4, na.rm = TRUE)
-range(d1$item011_4, na.rm = TRUE)
-
-
-
-
+mean(d1_pri$item011_4, na.rm = TRUE) #
+sd(d1_pri$item011_4, na.rm = TRUE)
+range(d1_pri$item011_4, na.rm = TRUE)
 ```
