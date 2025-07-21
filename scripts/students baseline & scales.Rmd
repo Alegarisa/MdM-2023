@@ -278,14 +278,6 @@ student_scales %>%
 
 
 ### Figures
-```{r}
-ggplot(student_scales, aes(x = sdq_ext)) + 
-  geom_histogram(bins = 30, fill = "cornflowerblue", color = "black", alpha = 0.7) + 
-  facet_wrap(~ demo002, scales = "free") +  # One plot per variable
-  theme_minimal() + 
-  labs(title = "externalizing behavior")
-```
-
 
 ```{r}
 custom_labels <- c("1" = "Girls", "2" = "Boys")
@@ -319,6 +311,30 @@ ggplot(student_scales, aes(x = sdq_int)) +
     title = "Internalizing Behavior by Gender"
   )
 ```
+### Checking model assumptions (ignoring clustering, though)
+```{r}
+table(is.na(student_scales$sdq_ext), useNA = "always") # no N/A
+table(is.na(student_scales$sdq_int), useNA = "always") # no N/A
+
+table(is.na(student_scales$demo002), useNA = "always") # no N/A
+
+table(student_scales$demo002) # SIMILAR GROUP SIZES
+
+var.test(sdq_ext ~ factor(demo002), data = student_scales) # variances are equal for externalizing
+var.test(sdq_int ~ factor(demo002), data = student_scales) # variances are equal for internalizing
+```
+
+```{r}
+# Two-sided, automatic variance check
+t.test(sdq_ext ~ factor(demo002), student_scales)
+
+# Two-sided, automatic variance check
+t.test(sdq_int ~ factor(demo002), student_scales)
+```
+
+
+
+
 
 
 ```{r}
