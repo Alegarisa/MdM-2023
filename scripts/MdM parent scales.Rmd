@@ -141,6 +141,17 @@ d1_par %>%
   mutate(percent = n / sum(n) * 100)
 ```
 
+### Other vars
+
+```{r}
+# welcome
+d1_par %>%
+  count(relteach002_1) %>%
+  mutate(percent = n / sum(n) * 100) # 0 = tot disagree to 4 = tot agree
+
+
+```
+
 
 ```{r}
 # Step 1: Recode values with labels
@@ -229,6 +240,11 @@ alpha(famcom_1) # 0.86
 emoexpres_1 <- d2_par %>%
   select(comfam003_1, comfam004_1, comfam006_1) 
 alpha(emoexpres_1) # 0.82
+
+t_rel <- d2_par %>%
+  select(relteach002_1, relteach003_1, relteach004_1, relteach005_1) 
+alpha(t_rel) # 0.85
+
 ```
 
 
@@ -237,12 +253,12 @@ alpha(emoexpres_1) # 0.82
 parent_scales <- d2_par %>%
   rowwise() %>%
   mutate(posi_rel = mean(c(pafas014_1, pafas015_1, pafas016_1, pafas017_1, pafas018_1), na.rm = TRUE),
-         coercion = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE))
+         coercion = mean(c(pafas005_1, pafas007_1, pafas009_1, pafas010_1, pafas013_1), na.rm = TRUE),
+         t_rel = mean(c(relteach002_1, relteach003_1, relteach004_1, relteach005_1), na.rm = TRUE))
 ```
 
 ### Avg. scores
 ```{r}
-
 # By parent reported child's gender 1 = girls, 2 boys
 parent_scales %>%
   group_by(intro002_1) %>%
@@ -260,3 +276,30 @@ parent_scales %>%
     n = n()
   )
 ```
+
+
+### Checking model assumptions (ignoring clustering, though)
+```{r}
+table(is.na(parent_scales$coercion), useNA = "always") # no N/A
+table(is.na(parent_scales$posi_rel), useNA = "always") # no N/A
+
+table(is.na(parent_scales$intro002_1), useNA = "always") # no N/A
+
+table(parent_scales$intro002_1) # SIMILAR GROUP SIZES
+
+var.test(coercion ~ factor(intro002_1), parent_scales) # variances are equal for externalizing
+var.test(posi_rel ~ factor(intro002_1), parent_scales) # variances are equal for internalizing
+```
+
+
+```{r}
+# Two-sided, automatic variance check
+t.test(coercion ~ factor(intro002_1), parent_scales)
+
+# Two-sided, automatic variance check
+t.test(posi_rel ~ factor(intro002_1), parent_scales)
+```
+
+
+
+

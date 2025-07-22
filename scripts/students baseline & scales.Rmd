@@ -102,7 +102,26 @@ d1_stu %>%
   count(primcaregiver) %>%
   mutate(percent = n / sum(n) * 100) # 73% madre (1); 11.30% abuela (5); 6% padre (3); 4.40% tia (7); 4.04% otra persona (9)
 ```
+ 
+### Other vars
+ commrel009 = i have good friends at school
+ commrel010 = i have good friends neighborhood
+ commrel011 = i have a best friend to talk when upset
+```{r}
+d1_stu %>%
+  count(commrel009) %>%
+  mutate(percent = n / sum(n) * 100)
 
+d1_stu %>%
+  count(commrel010) %>%
+  mutate(percent = n / sum(n) * 100)
+
+d1_stu %>%
+  count(commrel011) %>%
+  mutate(percent = n / sum(n) * 100)
+```
+ 
+ demo002
 
 ### Data prep: reverse scoring negatively worded items
 SDQ values = 1, 2, 3
@@ -156,7 +175,6 @@ alpha(prosocial) # 0.52
 tot_diff <- d2_stu %>%
   select(sdq003, sdq008, sdq013, sdq016, sdq024, sdq005, sdq007, sdq012, sdq018, sdq022, sdq002, sdq010, sdq015, sdq021, sdq025, sdq006, sdq011, sdq014, sdq019, sdq023) 
 alpha(tot_diff) # 0.73
-
 ```
 
 ### SDQ alternative scales
@@ -185,7 +203,6 @@ original inventory: 30 items, 10 items each subscale: a) support; b) psychologic
 crpbi001 to crpbi10 items are the complete support subscale
 crpbi011 to crpbi17 were part of a surveys used by Erin Rodriguez, but don't really belong to CRPBI. These tap on coercive and punitive parenting.
 ```{r}
-
 support <- d2_stu %>%
   select(crpbi001, crpbi002, crpbi003, crpbi004, crpbi005, crpbi006, crpbi007, crpbi008, crpbi009, crpbi010) 
 alpha(support) # 0.82
@@ -194,8 +211,17 @@ neg_coercive <- d2_stu %>%
   select(crpbi011, crpbi012, crpbi013, crpbi014, crpbi015, crpbi016, crpbi017) 
 alpha(neg_coercive) # 0.75
 ```
+### Student Version of the Teacher–Student Relationship Inventory (S-TSRI; Ang, 2020):
+Instrument has 3 factors: satisfaction, help, and conflict. We didn't include the conflict scale. 
+```{r}
+t_satrel <- d2_stu %>%
+  select(stsri001, stsri002, stsri003, stsri004, stsri005) 
+alpha(t_satrel) # 0.81
 
-
+t_help <- d2_stu %>%
+  select(stsri006, stsri007, stsri008, stsri009) 
+alpha(t_help) # 0.67
+```
 
 ### code for creating scales
 ```{r}
@@ -204,13 +230,14 @@ student_scales <- d2_stu %>%
   mutate(sdq_ext = mean(c(sdq005, sdq007, sdq012, sdq022, sdq002, sdq010, sdq015), na.rm = TRUE),
          sdq_int = mean(c(sdq003, sdq008, sdq013, sdq016, sdq024, sdq019, sdq023), na.rm = TRUE),
          support = mean(c(crpbi001, crpbi002, crpbi003, crpbi004, crpbi005, crpbi006, crpbi007, crpbi008, crpbi009, crpbi010), na.rm = TRUE),
-         neg_coercive = mean(c(crpbi011, crpbi012, crpbi013, crpbi014, crpbi015, crpbi016, crpbi017), na.rm = TRUE))
+         neg_coercive = mean(c(crpbi011, crpbi012, crpbi013, crpbi014, crpbi015, crpbi016, crpbi017), na.rm = TRUE),
+         t_satrel = mean(c(stsri001, stsri002, stsri003, stsri004, stsri005), na.rm = TRUE))
 ```
 
 ### Average scores gy gender
 1 = girls, 2 = boys
 ```{r}
-# SDQ
+# SDQ ext
 student_scales %>%
   group_by(demo002) %>%
   summarise(
@@ -218,7 +245,7 @@ student_scales %>%
     sd_sdq_ext = sd(sdq_ext, na.rm = TRUE),
     n = n()
   )
-
+# SDQ int
 student_scales %>%
   group_by(demo002) %>%
   summarise(
@@ -226,8 +253,7 @@ student_scales %>%
     sd_sdq_int = sd(sdq_int, na.rm = TRUE),
     n = n()
   )
-
-# Support & coercion
+# Support
 student_scales %>%
   group_by(demo002) %>%
   summarise(
@@ -235,7 +261,7 @@ student_scales %>%
     sd_support = sd(support, na.rm = TRUE),
     n = n()
   )
-
+# coercion
 student_scales %>%
   group_by(demo002) %>%
   summarise(
@@ -243,42 +269,67 @@ student_scales %>%
     sd_neg_coercive = sd(neg_coercive, na.rm = TRUE),
     n = n()
   )
-
+# satisfaction with rel with students
+student_scales %>%
+  group_by(demo002) %>%
+  summarise(
+    mean_t_satrel = mean(t_satrel, na.rm = TRUE),
+    sd_t_satrel = sd(t_satrel, na.rm = TRUE),
+    n = n()
+  )
 ```
 
 
+### SDQ
+```{r}
+#Checking model assumptions (ignoring clustering, though)
+table(is.na(student_scales$sdq_ext), useNA = "always") # no N/A
+table(is.na(student_scales$sdq_int), useNA = "always") # no N/A
+
+table(is.na(student_scales$demo002), useNA = "always") # no N/A
+
+table(student_scales$demo002) # SIMILAR GROUP SIZES
+
+var.test(sdq_ext ~ factor(demo002), student_scales) # variances are equal for externalizing
+var.test(sdq_int ~ factor(demo002), student_scales) # variances are equal for internalizing
+
+# Two-sided, automatic variance check
+t.test(sdq_ext ~ factor(demo002), student_scales)
+
+# Two-sided, automatic variance check
+t.test(sdq_int ~ factor(demo002), student_scales)
+```
 
 
+### CRPBI
+```{r}
+# Checking model assumptions (ignoring clustering, though)
+table(is.na(student_scales$neg_coercive), useNA = "always") # no N/A
+table(is.na(student_scales$support), useNA = "always") # no N/A
+
+var.test(neg_coercive ~ factor(demo002), data = student_scales) # variances are equal for externalizing
+var.test(support ~ factor(demo002), data = student_scales) # variances are equal for internalizing
+
+# Two-sided, automatic variance check
+t.test(neg_coercive ~ factor(demo002), student_scales)
+
+# Two-sided, automatic variance check
+t.test(support ~ factor(demo002), student_scales)
+```
 
 
+### STSRI
+```{r}
+# Checking model assumptions (ignoring clustering, though)
+table(is.na(student_scales$t_satrel), useNA = "always") # no N/A
 
+var.test(t_satrel ~ factor(demo002), student_scales) # variances are equal for externalizing
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Two-sided, automatic variance check
+t.test(t_satrel ~ factor(demo002), student_scales)
+```
 
 ### Figures
-
 ```{r}
 custom_labels <- c("1" = "Girls", "2" = "Boys")
 
@@ -311,30 +362,6 @@ ggplot(student_scales, aes(x = sdq_int)) +
     title = "Internalizing Behavior by Gender"
   )
 ```
-### Checking model assumptions (ignoring clustering, though)
-```{r}
-table(is.na(student_scales$sdq_ext), useNA = "always") # no N/A
-table(is.na(student_scales$sdq_int), useNA = "always") # no N/A
-
-table(is.na(student_scales$demo002), useNA = "always") # no N/A
-
-table(student_scales$demo002) # SIMILAR GROUP SIZES
-
-var.test(sdq_ext ~ factor(demo002), data = student_scales) # variances are equal for externalizing
-var.test(sdq_int ~ factor(demo002), data = student_scales) # variances are equal for internalizing
-```
-
-```{r}
-# Two-sided, automatic variance check
-t.test(sdq_ext ~ factor(demo002), student_scales)
-
-# Two-sided, automatic variance check
-t.test(sdq_int ~ factor(demo002), student_scales)
-```
-
-
-
-
 
 
 ```{r}

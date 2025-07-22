@@ -53,7 +53,7 @@ d1_edu <- recode_missing_df(d_edu) # the function strips out variable labels
 ```
 
 
-### this code is for parents, but copied here to see what works for educators, too
+### Demo vars
 ```{r}
 # age
 mean(d1_edu$demo002_3, na.rm = TRUE)
@@ -130,17 +130,18 @@ sd(d1_edu$demo004_3[!d1_edu$demo004_3 %in% c(31)], na.rm = TRUE)
 
 
 # primary caregiver
-d %>%
+d1_edu %>%
   count(demo008_3) %>%
   mutate(percent = n / sum(n) * 100)
 
 # hours per day w/child on a weekday
-d %>%
+d1_edu %>%
   count(demo009_3) %>%
   mutate(percent = n / sum(n) * 100)
 ```
 
-
+### Issues
+I identified very high numbers in the studinfo00x_3 -- some educators reported total students they had, not where they were homeroom teachers.
 ```{r}
 range(d1_edu$studinfo001_3[d1_edu$cohort == "1"], na.rm = TRUE)
 range(d1_edu$studinfo001_3[d1_edu$cohort == "2"], na.rm = TRUE)
@@ -162,11 +163,70 @@ d1_edu %>%
 d1_edu %>%
   filter(studinfo001_3 > 40) 
 
+# no aplica
 d1_edu %>%
   filter(intro001_3_77 == 1) 
 
+# prefer not to respond
 d1_edu %>%
   filter(intro001_3_99 == 1) 
-	
 ```
 
+### teacher Version of the Teacher–Student Relationship Inventory (T-TSRI; Ang, 2005):
+Instrument has 3 factors: satisfaction, help, and conflict. We didn't include the conflict scale. 
+```{r}
+s_satrel <- d1_edu %>%
+  select(tsri007_3, tsri008_3, tsri009_3, tsri010_3, tsri011_3) 
+alpha(s_satrel) # 0.86
+```
+
+
+### code for creating scales
+```{r}
+teacher_scales <- d1_edu %>%
+  rowwise() %>%
+  mutate(s_satrel = mean(c(tsri007_3, tsri008_3, tsri009_3, tsri010_3, tsri011_3), na.rm = TRUE))
+```
+
+
+### Average scores gy gender
+0 = woman, 1 = man
+```{r}
+# satisfaction with rel with students
+teacher_scales %>%
+  group_by(demo001_3) %>%
+  summarise(
+    mean_t_satrel = mean(s_satrel, na.rm = TRUE),
+    sd_t_satrel = sd(s_satrel, na.rm = TRUE),
+    n = n()
+  )
+```
+
+### TSRI
+No sig. difference between satirsfaction in relation based on teacher's gender. 
+```{r}
+# Checking model assumptions (ignoring clustering, though)
+table(is.na(teacher_scales$s_satrel), useNA = "always") # 39 N/A
+
+table(teacher_scales$demo001_3) # Very unequal group sizes (0 = 317, 1 = 55)
+
+var.test(s_satrel ~ factor(demo001_3), teacher_scales) # variances are equal for externalizing
+
+# Two-sided, automatic variance check
+t.test(s_satrel ~ factor(demo001_3), teacher_scales)
+```
+# tsri008_3
+Describiría mis relaciones con estos alumnos como positivas.
+
+0 = almost never true; 2 = sometimes is true,  4 = almost always true
+
+almost never/rarely = 7.74%
+sometimes = 13%
+frequently/almost always = 64.4
+n/a = 15
+```{r}
+# primary caregiver
+d1_edu %>%
+  count(tsri008_3) %>%
+  mutate(percent = n / sum(n) * 100)
+```
